@@ -20,3 +20,25 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+bin/*.*
+src/.vs
+src/RenderVideo/Debug
+src/RenderVideo/Release
+src/RenderVideo/x64
+src/QtRendererVideo/GeneratedFiles
+src/QtRendererVideo/x64
+ 
+/src/OpenGLVBO/x64
+/src/vsout
+/src/OpenGLEBO/x64
+/src/OpenGLTexcoord/x64
+/src/..vsout
+/src/OpenGLMat/x64
+/bin/x64
+/src/OpenGLVirtualCameras/x64
+/vsout
+/OpenGLEBO/x64
+/OpenGLVirtualCameras/x64
+/RenderVideo/x64
+/RenderVideo.VC.db
+/.vs
