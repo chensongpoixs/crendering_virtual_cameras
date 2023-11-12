@@ -9,9 +9,9 @@
 #include <GL/glew.h>
 #include <QTimer>
 #include <QDateTime>
-#include "OpenGLSceneRoaming.h"
+#include "OpenGLParse3DObjectModel.h"
 
-OpenGLSceneRoaming::OpenGLSceneRoaming(QWidget *parent)
+OpenGLParse3DObjectModel::OpenGLParse3DObjectModel(QWidget *parent)
     : QWidget(parent, Qt::MSWindowsOwnDC)
 {
 	// 设置这个就不能使用QT渲染的了  就需要重新实现QPaintEngine函数
@@ -32,7 +32,7 @@ OpenGLSceneRoaming::OpenGLSceneRoaming(QWidget *parent)
 	}
 
 	QTimer* timer = new QTimer(parent);
-	connect(timer, &QTimer::timeout, this, &OpenGLSceneRoaming::Tick);
+	connect(timer, &QTimer::timeout, this, &OpenGLParse3DObjectModel::Tick);
 	timer->start(20);
 	camera.SetRotation(0, 180, 0);
 	initializeGL();
@@ -41,7 +41,7 @@ OpenGLSceneRoaming::OpenGLSceneRoaming(QWidget *parent)
 	_gl_update();
 }
 
-OpenGLSceneRoaming::~OpenGLSceneRoaming()
+OpenGLParse3DObjectModel::~OpenGLParse3DObjectModel()
 {
 	wglMakeCurrent(NULL, NULL);
 	if (rc)
@@ -56,81 +56,81 @@ OpenGLSceneRoaming::~OpenGLSceneRoaming()
 
 
 
-void OpenGLSceneRoaming::resizeEvent(QResizeEvent* event)
+void OpenGLParse3DObjectModel::resizeEvent(QResizeEvent* event)
 {
 	// 绘制的大小
 	glViewport(0, 0, event->size().width(), event->size().height());
 	_gl_update();
 }
 
-void OpenGLSceneRoaming::showEvent(QShowEvent* event)
+void OpenGLParse3DObjectModel::showEvent(QShowEvent* event)
 {
 	// 最小化需要OpenGL重新渲染 函数
 	_gl_update();
 }
 
-void OpenGLSceneRoaming::keyPressEvent(QKeyEvent* event)
+void OpenGLParse3DObjectModel::keyPressEvent(QKeyEvent* event)
 {
 	if (event->key() == Qt::Key_W)
 	{
 		isPressW = true;
 	}
-	  if (event->key() == Qt::Key_S)
+	if (event->key() == Qt::Key_S)
 	{
 		isPressS = true;
 	}
-	  if (event->key() == Qt::Key_A)
+	if (event->key() == Qt::Key_A)
 	{
 		isPressA = true;
 	}
-	  if (event->key() == Qt::Key_D)
+	if (event->key() == Qt::Key_D)
 	{
 		isPressD = true;
 	}
-	  if (event->key() == Qt::Key_Q)
+	if (event->key() == Qt::Key_Q)
 	{
 		isPressQ = true;
 	}
-	  if (event->key() == Qt::Key_E)
+	if (event->key() == Qt::Key_E)
 	{
 		isPressE = true;
 	}
 }
 
-void OpenGLSceneRoaming::keyReleaseEvent(QKeyEvent* event)
+void OpenGLParse3DObjectModel::keyReleaseEvent(QKeyEvent* event)
 {
 	if (event->key() == Qt::Key_W)
 	{
 		isPressW = false;
 	}
-	  if (event->key() == Qt::Key_S)
+	if (event->key() == Qt::Key_S)
 	{
 		isPressS = false;
 	}
-	  if (event->key() == Qt::Key_A)
+	if (event->key() == Qt::Key_A)
 	{
 		isPressA = false;
 	}
-	  if (event->key() == Qt::Key_D)
+	if (event->key() == Qt::Key_D)
 	{
 		isPressD = false;
 	}
-	  if (event->key() == Qt::Key_Q)
+	if (event->key() == Qt::Key_Q)
 	{
 		isPressQ = false;
 	}
-	  if (event->key() == Qt::Key_E)
+	if (event->key() == Qt::Key_E)
 	{
 		isPressE = false;
 	}
 }
 
-void OpenGLSceneRoaming::mousePressEvent(QMouseEvent* event)
+void OpenGLParse3DObjectModel::mousePressEvent(QMouseEvent* event)
 {
 	lastPoint = event->pos();
 }
 
-void OpenGLSceneRoaming::mouseMoveEvent(QMouseEvent* event)
+void OpenGLParse3DObjectModel::mouseMoveEvent(QMouseEvent* event)
 {
 	QPoint delta = event->pos() - lastPoint;
 	lastPoint = event->pos();
@@ -144,7 +144,7 @@ void OpenGLSceneRoaming::mouseMoveEvent(QMouseEvent* event)
 
 
 
-bool OpenGLSceneRoaming::event(QEvent* event)
+bool OpenGLParse3DObjectModel::event(QEvent* event)
 {
 	// 接受事件判断是否是自己的渲染函数
 	if (event->type() == QtEvent::GL_Renderer)
@@ -154,10 +154,10 @@ bool OpenGLSceneRoaming::event(QEvent* event)
 	return QWidget::event(event);
 }
 
-bool OpenGLSceneRoaming::initializeGL()
+bool OpenGLParse3DObjectModel::initializeGL()
 {
 
-	program = CreateGpuProgram("assets/sceneroaming/vertexShader.glsl", "assets/sceneroaming/frag/fragmentShader.glsl");
+	program = CreateGpuProgram("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
 
 	// 使用着色器程序
 	glUseProgram(program);
@@ -246,7 +246,7 @@ bool OpenGLSceneRoaming::initializeGL()
 }
 
 
-bool OpenGLSceneRoaming::CreateGLContext()
+bool OpenGLParse3DObjectModel::CreateGLContext()
 {
 	dc = GetDC(hwnd);
 
@@ -274,20 +274,20 @@ bool OpenGLSceneRoaming::CreateGLContext()
 	return true;
 }
 
-bool OpenGLSceneRoaming::_gl_update()
+bool OpenGLParse3DObjectModel::_gl_update()
 {
 	QApplication::postEvent(this, new QtEvent(QtEvent::GL_Renderer));
 	return true;
 }
 
 
-void OpenGLSceneRoaming::Tick()
+void OpenGLParse3DObjectModel::Tick()
 {
 
 	static long long lastts = 0;
 	if (lastts == 0)
 	{
-		lastts = QDateTime::currentMSecsSinceEpoch(); 
+		lastts = QDateTime::currentMSecsSinceEpoch();
 	}
 
 	float dt = QDateTime::currentMSecsSinceEpoch() - lastts;
@@ -302,7 +302,7 @@ void OpenGLSceneRoaming::Tick()
 	{
 		camera.Translate(0, 0, -speed * dt);
 	}
-	 if (isPressA)
+	if (isPressA)
 	{
 		camera.Translate(-speed * dt, 0, 0);
 	}
@@ -313,14 +313,14 @@ void OpenGLSceneRoaming::Tick()
 	if (isPressQ)
 	{
 		camera.Translate(0, speed * dt, 0);
-	} 
+	}
 	if (isPressE)
 	{
 		camera.Translate(0, -speed * dt, 0);
 	}
 	_gl_update();
 }
-void OpenGLSceneRoaming::Renderer()
+void OpenGLParse3DObjectModel::Renderer()
 {
 	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

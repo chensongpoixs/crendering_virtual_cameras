@@ -1,7 +1,7 @@
 # crendering_virtual_cameras
 
 
-渲染虚拟相机  基础理论
+OpenGL入门 渲染虚拟相机  
 
 
 [1、VBO](OpenGLVBO)
@@ -12,4 +12,8 @@
 
 [4、模型矩阵、视图矩阵、投影矩阵的坐标系的转换](OpenGLMat)
 
-[5、 virtual Camera ](OpenGLVirtualCameras)
+[5、 虚拟相机 ](OpenGLVirtualCameras)
+
+[6、 场景漫游 ](OpenGLSceneRoaming)
+
+[7、 解析3D Object 模型 ](OpenGLParse3DObjectModel)
