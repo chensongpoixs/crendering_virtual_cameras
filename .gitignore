@@ -48,3 +48,9 @@ src/QtRendererVideo/x64
 /OpenGLVBO/x64
 /QtRendererVideo/GeneratedFiles
 /OpenGLSceneRoaming/x64
+/OpenGLEBO/OpenGLEBO.vcxproj.user
+/OpenGLMat/OpenGLMat.vcxproj.user
+/OpenGLTexcoord/OpenGLTexcoord.vcxproj.user
+/OpenGLVBO/OpenGLVBO.vcxproj.user
+/OpenGLVirtualCameras/OpenGLVirtualCameras.vcxproj.user
+/QtRendererVideo/QtRendererVideo.vcxproj.user
