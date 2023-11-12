@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLMat", "OpenGLMat\Open
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLVirtualCameras", "OpenGLVirtualCameras\OpenGLVirtualCameras.vcxproj", "{596B6FE4-335C-4AEB-8C73-403DDD19DA53}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLSceneRoaming", "OpenGLSceneRoaming\OpenGLSceneRoaming.vcxproj", "{45A78C97-828B-4EB0-BB2A-DCD2E62AB7DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -69,6 +71,12 @@ Global
 		{596B6FE4-335C-4AEB-8C73-403DDD19DA53}.Release|x64.ActiveCfg = Release|x64
 		{596B6FE4-335C-4AEB-8C73-403DDD19DA53}.Release|x64.Build.0 = Release|x64
 		{596B6FE4-335C-4AEB-8C73-403DDD19DA53}.Release|x86.ActiveCfg = Release|x64
+		{45A78C97-828B-4EB0-BB2A-DCD2E62AB7DC}.Debug|x64.ActiveCfg = Debug|x64
+		{45A78C97-828B-4EB0-BB2A-DCD2E62AB7DC}.Debug|x64.Build.0 = Debug|x64
+		{45A78C97-828B-4EB0-BB2A-DCD2E62AB7DC}.Debug|x86.ActiveCfg = Debug|x64
+		{45A78C97-828B-4EB0-BB2A-DCD2E62AB7DC}.Release|x64.ActiveCfg = Release|x64
+		{45A78C97-828B-4EB0-BB2A-DCD2E62AB7DC}.Release|x64.Build.0 = Release|x64
+		{45A78C97-828B-4EB0-BB2A-DCD2E62AB7DC}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
