@@ -130,7 +130,7 @@ bool OpenGLMat::initializeGL()
 	// 告诉shader 顶点数据排列
 	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
 	glVertexAttribPointer(texcoordLocation, 2,
-		GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 8));
+		GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 6));
 
 
 

@@ -216,7 +216,7 @@ bool OpenGLParse3DObjectModel::initializeGL()
 	// 告诉shader 顶点数据排列
 	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
 	glVertexAttribPointer(texcoordLocation, 2,
-		GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 8));
+		GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 6));
 
 
 
@@ -228,10 +228,10 @@ bool OpenGLParse3DObjectModel::initializeGL()
 	// 创建EBO
 	EBO = CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(indices), indices);
 	//////////////////////////////VAO 解绑后操作texcoord//////////////////////////////////////////
-	QImage img = QImage("assets/sceneroaming/texcoord/we.jpg");
+	QImage img = QImage("assets/parse3dobjectmodel/we.jpg");
 	tex1 = CreateGLTexture(GL_TEXTURE_2D, img.width(), img.height(), GL_RGBA, GL_BGRA, img.bits());
 
-	QImage img2 = QImage("assets/sceneroaming/texcoord/we.jpg");
+	QImage img2 = QImage("assets/parse3dobjectmodel/we.jpg");
 	tex2 = CreateGLTexture(GL_TEXTURE_2D, img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
 
 
