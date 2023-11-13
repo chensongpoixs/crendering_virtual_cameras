@@ -1,7 +1,7 @@
 # crendering_virtual_cameras
 
 
-OpenGL入门 渲染虚拟相机  
+OpenGL基础操作 渲染虚拟相机  
 
 
 [1、VBO](OpenGLVBO)
