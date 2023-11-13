@@ -75,10 +75,36 @@ bool OpenGLVBO::event(QEvent* event)
 	return QWidget::event(event);
 }
 
+
+const char* vertexShaderSource = R"(
+    #version 330 core
+
+    layout (location = 0) in vec3 aPos;
+
+    void main()
+    {
+        gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    }
+)";
+
+const char* fragmentShaderSource = R"(
+    #version 330 core
+
+    out vec4 FragColor;
+
+    void main()
+    {
+        FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    }
+)";
+
+
+
 bool OpenGLVBO::initializeGL()
 {
 
 	GLuint program =  CreateGpuProgram("assets/vbo/vertexShader.glsl", "assets/vbo/frag/fragmentShader.glsl");
+	//GLuint program = CreateGpuProgram(vertexShaderSource, fragmentShaderSource);
 
 	// 使用着色器程序
 	glUseProgram(program);
@@ -190,22 +216,54 @@ GLuint OpenGLVBO::CreateGpuProgram(const char* vs, const char* fs)
 	GLuint fsShader = CompileShader(GL_FRAGMENT_SHADER, fs);*/
 	GLuint vsShader =  _compile_sharder(GL_VERTEX_SHADER, vs);
 	GLuint fsShader = _compile_sharder(GL_FRAGMENT_SHADER, fs);
-	//GLboolean vssh = glIsShader(vsShader);
-	//GLboolean fssh = glIsShader(fsShader);
+	 GLboolean vssh = glIsShader(vsShader);
+	 GLboolean fssh = glIsShader(fsShader);
 	check_error();
 	// 创建shader 程序
 	GLuint shaderProgram = glCreateProgram();
+	GLboolean glprogram = glIsProgram(shaderProgram);
+	//glUseProgram(shaderProgram);
+	check_error(); 
+	//(GLuint program, GLsizei maxCount, GLsizei* count, GLuint* shaders)
+	// 获取已附加的着色器列表
+	const GLsizei maxCount = 1024; // 最大可能的附加着色器数量
+	GLsizei count = 0;
+	GLuint attachedShaders[maxCount] = {0};
+	glGetAttachedShaders(glprogram, maxCount, &count, attachedShaders);
+
+	// 打印已附加的着色器列表
+	printf("Attached shaders:\n"); //<< std::endl;
+	for (int i = 0; i < count; ++i)
+	{
+		printf("attachedShaders[%u] = %u \n ", i, attachedShaders[i]);
+		attachedShaders[i] = -1;
+	}
+	count = 0;
+	// 着色器附加到着色器程序上面去 
+	glAttachShader(shaderProgram, vsShader); 
+	check_error(); 
+	glGetAttachedShaders(glprogram, maxCount, &count, attachedShaders);
+
+	// 打印已附加的着色器列表
+	printf("Attached shaders:\n"); //<< std::endl;
+	for (int i = 0; i < count; ++i) 
+	{
+		printf("attachedShaders[%u] = %u \n ", i, attachedShaders[i]);
+		attachedShaders[i] = -1;
+	}
+	count = 0;
+	glAttachShader(shaderProgram, fsShader);//GL_INVALID_OPERATION
 	check_error();
-	// 着色器附加到着色器程序上面去
-	//glGetAttachedShaders(shaderProgram, 5)
-	glAttachShader(shaderProgram, vsShader);
-	//glLinkProgram(shaderProgram);
-	//glDetachShader(shaderProgram, vsShader);
-	//glDeleteShader(vsShader);
-	check_error();
-	//GL_INVALID_OPERATION
-	glAttachShader(shaderProgram, fsShader);
-	check_error();
+	glGetAttachedShaders(glprogram, maxCount, &count, attachedShaders);
+
+	// 打印已附加的着色器列表
+	printf("Attached shaders:\n"); //<< std::endl;
+	for (int i = 0; i < count; ++i)
+	{
+		printf("attachedShaders[%u] = %u \n ", i, attachedShaders[i]);
+		attachedShaders[i] = -1;
+	}
+	count = 0;
 	/*GLenum err = glGetError();
 	printf("GL_ATTACHED_SHADERS[err = %u]\n", err);*/
 	GLint success = GL_TRUE;
@@ -219,7 +277,7 @@ GLuint OpenGLVBO::CreateGpuProgram(const char* vs, const char* fs)
 	//获取编译的状态
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	check_error();
-	if (!success)
+	if ( success != GL_TRUE)
 	{
 		char infolog[1024] = { 0 };
 		GLsizei loglen = 0;
@@ -232,6 +290,7 @@ GLuint OpenGLVBO::CreateGpuProgram(const char* vs, const char* fs)
 	}
 	check_error();
 	printf("LIne sharder program success Compile Success !!!\n");
+	//glValidateProgram(shaderPro);
 	// //删除着色器
 	
 	glDetachShader(shaderProgram, fsShader); 
@@ -281,47 +340,54 @@ bool OpenGLVBO::_gl_update()
 
 GLint OpenGLVBO::_compile_sharder(GLenum shaderType, const char* url)
 {
-	char* shaderCode = load_file_context(url);
-	/*const char* shaderTypeStr = reinterpret_cast<const char *>("Vertex Shader");
+	  char* shaderCode =   load_file_context(url);
+	 const char* shaderTypeStr = reinterpret_cast<const char *>("Vertex Shader");
 	if (GL_FRAGMENT_SHADER == shaderType)
 	{
 		shaderTypeStr = reinterpret_cast<const char*>("Fragement Shader");
-	}*/
+	} 
 	//创建着色器
 	GLuint shader = glCreateShader(shaderType);
 	if (!shader)
 	{
 		throw;
 	}
+	if (!glIsShader(shader)) 
+	{
+		throw;
+		// 着色器对象无效，处理错误
+	}
+	check_error();
 	//GLint size = strlen((const char*)(shaderCode));
 	//获取着色器的代码
 	glShaderSource(shader, 1, &shaderCode, NULL);
+	check_error();
 	// 编译着色器
 	glCompileShader(shader);
-
+	check_error();
 	GLint success = GL_TRUE;
 
 	//获取编译的状态
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
+	check_error();
+	if (GL_TRUE != success)
 	{
 		char infolog[1024] = { 0 };
 		GLsizei loglen = 0;
 		//获取错误日志
 		glGetShaderInfoLog(shader, sizeof(infolog), &loglen, infolog);
-		printf("[ERROR] Compile  error %s\n", /*shaderTypeStr,*/ infolog);
+		printf("[ERROR] Compile %s error %s\n",  shaderTypeStr,  infolog);
 
 		// 编译出错删除shader
 		glDeleteShader(shader);
 	}
 	printf("Compile Success !!!\n");
-	if (shaderCode)
+	 if (shaderCode)
 	{
 		delete []shaderCode;
 		shaderCode = NULL;
-	}
-	return success;
+	} 
+	return shader;
 }
 
 

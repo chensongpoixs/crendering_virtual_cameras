@@ -131,7 +131,7 @@ GLint  Compile_sharder(GLenum shaderType, const char* url)
 		delete[]shaderCode;
 		shaderCode = NULL;
 	}
-	return success;
+	return shader;
 }
 
 

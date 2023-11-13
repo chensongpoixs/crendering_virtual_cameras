@@ -142,11 +142,11 @@ bool OpenGLMat::initializeGL()
 	// 创建EBO
 	EBO = CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(indices), indices);
 	//////////////////////////////VAO 解绑后操作texcoord//////////////////////////////////////////
-	QImage img = QImage("texcoord/we.jpg");
+	QImage img = QImage("assets/mat/we.jpg");
 	tex1 = CreateGLTexture(GL_TEXTURE_2D, img.width(), img.height(), GL_RGBA, GL_BGRA, img.bits());
 
-	QImage img2 = QImage("texcoord/we.jpg");
-	tex2 = CreateGLTexture(GL_TEXTURE_2D, img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
+	//QImage img2 = QImage("assets/mat/we.jpg");
+//	tex2 = CreateGLTexture(GL_TEXTURE_2D, img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
 
 
 	//启用面剔除
@@ -211,11 +211,11 @@ void OpenGLMat::Renderer()
 
 
 	//激活纹理0号单元
-	glActiveTexture(GL_TEXTURE5);
+	//glActiveTexture(GL_TEXTURE5);
 	//绑定纹理单元
-	glBindTexture(GL_TEXTURE_2D, tex2);
+	//glBindTexture(GL_TEXTURE_2D, tex2);
 	// 因为激活是0号单元所以使用0
-	glUniform1i(smp2, 5);
+	//glUniform1i(smp2, 5);
 
 	// 模型矩阵
 	QMatrix4x4 modelMat;

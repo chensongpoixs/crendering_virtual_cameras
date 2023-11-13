@@ -228,10 +228,10 @@ bool OpenGLSceneRoaming::initializeGL()
 	// 创建EBO
 	EBO = CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(indices), indices);
 	//////////////////////////////VAO 解绑后操作texcoord//////////////////////////////////////////
-	QImage img = QImage("assets/sceneroaming/texcoord/we.jpg");
+	QImage img = QImage("assets/sceneroaming/we.jpg");
 	tex1 = CreateGLTexture(GL_TEXTURE_2D, img.width(), img.height(), GL_RGBA, GL_BGRA, img.bits());
 
-	QImage img2 = QImage("assets/sceneroaming/texcoord/we.jpg");
+	QImage img2 = QImage("assets/sceneroaming/we.jpg");
 	tex2 = CreateGLTexture(GL_TEXTURE_2D, img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
 
 
