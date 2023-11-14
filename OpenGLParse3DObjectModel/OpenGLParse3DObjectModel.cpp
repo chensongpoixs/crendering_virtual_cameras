@@ -156,7 +156,7 @@ bool OpenGLParse3DObjectModel::event(QEvent* event)
 
 bool OpenGLParse3DObjectModel::initializeGL()
 {
-	mesh =  chen::LoadObjModel("assets/teapot.obj", false);
+	mesh =  chen::LoadObjModel("assets/teapot.obj", true/*EBO 开启就不需要内存空间*/);
 	program = chen::CreateGpuProgram("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
 
 	// 使用着色器程序
@@ -234,10 +234,11 @@ bool OpenGLParse3DObjectModel::initializeGL()
 	QImage img2 = QImage("assets/parse3dobjectmodel/we.jpg");
 	tex2 = chen::CreateGLTexture(GL_TEXTURE_2D, img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
 
-
+	//开启深度测试
+	glEnable(GL_DEPTH_TEST);
 	//启用面剔除
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK); // GL_FRONT
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK); // GL_FRONT
 
 	glPolygonMode(GL_FRONT, GL_FILL);
 
@@ -351,9 +352,9 @@ void OpenGLParse3DObjectModel::Renderer()
 	// 移动模型
 	modelMat.translate(0, 0, -2);
 	// 转动
-	modelMat.rotate(30, QVector3D(0, 0, 1));
+	//modelMat.rotate(30, QVector3D(0, 0, 1));
 	// 
-	//modelMat.scale(2,1, 1);
+	modelMat.scale(1,1, 1);
 
 	// 眼睛的位置
 	/*QVector3D eyePoint = QVector3D(0, 0, 0);
@@ -378,9 +379,9 @@ void OpenGLParse3DObjectModel::Renderer()
 	glBindVertexArray(VAO);
 	// glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//绘制模式  三个顶点
-	//  glDrawArrays(GL_TRIANGLES, 0, 6);
+	  glDrawArrays(GL_TRIANGLES, 0, mesh->indexCount);
 	// 绑定EBO
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);  //EBO 开启就不需要内存空间
 	// EBO绘制的方式 
 	glDrawElements(GL_TRIANGLES, mesh->indexCount, GL_UNSIGNED_INT, NULL);
 	//glDrawElements(GL_TRIANGLES, 3, GL_FLOAT, 0);
