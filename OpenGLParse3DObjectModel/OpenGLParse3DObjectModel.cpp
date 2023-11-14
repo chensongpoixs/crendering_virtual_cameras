@@ -191,7 +191,7 @@ bool OpenGLParse3DObjectModel::initializeGL()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 	// shader --> 启用顶点属性
-	glEnableVertexAttribArray(shader->viewLocation);
+	glEnableVertexAttribArray(shader->posLocation);
 	chen::check_error();
 	// 告诉shader 顶点数据排列
 	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
