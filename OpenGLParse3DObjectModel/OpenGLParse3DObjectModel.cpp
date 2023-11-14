@@ -156,12 +156,12 @@ bool OpenGLParse3DObjectModel::event(QEvent* event)
 
 bool OpenGLParse3DObjectModel::initializeGL()
 {
-
-	program = CreateGpuProgram("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
+	mesh =  chen::LoadObjModel("assets/teapot.obj", false);
+	program = chen::CreateGpuProgram("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
 
 	// 使用着色器程序
 	glUseProgram(program);
-	check_error();
+	chen::check_error();
 	//assert(!glGetError());
 	// 获取shader 顶点pos
 	GLint posLocation = glGetAttribLocation(program, "pos");
@@ -179,19 +179,19 @@ bool OpenGLParse3DObjectModel::initializeGL()
 	projLocation = glGetUniformLocation(program, "projMat");;
 
 	//GLint tLocation = glGetAttribLocation(program, "t");
-	check_error();
+	chen::check_error();
 	//创建VAO
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
-	check_error();
-	VBO = CreateGLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(vertices), vertices);
+	chen::check_error();
+	VBO = chen::CreateGLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, mesh->vertexCount * sizeof(struct chen::Vertex), mesh->vertices);
 
 	//// 绑定一下 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 	// shader --> 启用顶点属性
 	glEnableVertexAttribArray(posLocation);
-	check_error();
+	chen::check_error();
 	// 告诉shader 顶点数据排列
 	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
 	glVertexAttribPointer(
@@ -202,17 +202,17 @@ bool OpenGLParse3DObjectModel::initializeGL()
 		sizeof(float) * 8, // 步长
 		(const void*)(sizeof(float) * 0) // 偏移量,第一组数据的起始位置
 	);
-	check_error();
+	chen::check_error();
 	// shader --> 启用顶点属性
 	glEnableVertexAttribArray(colorLocation);
-	check_error();
+	chen::check_error();
 	// 告诉shader 顶点数据排列
 	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
 	glVertexAttribPointer(colorLocation, 3,
 		GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 3));
 	// shader --> 启用顶点属性
 	glEnableVertexAttribArray(texcoordLocation);
-	check_error();
+	chen::check_error();
 	// 告诉shader 顶点数据排列
 	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
 	glVertexAttribPointer(texcoordLocation, 2,
@@ -220,19 +220,19 @@ bool OpenGLParse3DObjectModel::initializeGL()
 
 
 
-	check_error();
+	chen::check_error();
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
 
 	// 创建EBO
-	EBO = CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(indices), indices);
+	EBO = chen::CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, mesh->indexCount * sizeof(uint32_t), mesh->indices);
 	//////////////////////////////VAO 解绑后操作texcoord//////////////////////////////////////////
 	QImage img = QImage("assets/parse3dobjectmodel/we.jpg");
-	tex1 = CreateGLTexture(GL_TEXTURE_2D, img.width(), img.height(), GL_RGBA, GL_BGRA, img.bits());
+	tex1 = chen::CreateGLTexture(GL_TEXTURE_2D, img.width(), img.height(), GL_RGBA, GL_BGRA, img.bits());
 
 	QImage img2 = QImage("assets/parse3dobjectmodel/we.jpg");
-	tex2 = CreateGLTexture(GL_TEXTURE_2D, img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
+	tex2 = chen::CreateGLTexture(GL_TEXTURE_2D, img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
 
 
 	//启用面剔除
@@ -382,7 +382,7 @@ void OpenGLParse3DObjectModel::Renderer()
 	// 绑定EBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	// EBO绘制的方式 
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, mesh->indexCount, GL_UNSIGNED_INT, NULL);
 	//glDrawElements(GL_TRIANGLES, 3, GL_FLOAT, 0);
 	// 绑定VAO2
 	//glBindVertexArray(VAO2);

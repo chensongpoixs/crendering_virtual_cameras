@@ -98,4 +98,7 @@ private:
 
 
     QPoint lastPoint;
+
+
+    struct chen::Mesh* mesh = NULL;
 };
