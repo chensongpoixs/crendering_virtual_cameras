@@ -61,8 +61,9 @@ private:
         0.5f, 0.5f, 0.0f,         1.0f, 1.0f, 0.0f                   // right top 
     };
 
-    GLuint VBO, VAO, EBO;
-
+    GLuint VBO, VAO;
+    // 索引缓冲区对象，这个缓冲区主要用来存储的索引信信息
+    GLuint  EBO;
     GLuint indices[6] = {
         0,1,2, //第一个三角形
         0, 2, 3 //第二个三角形
