@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include <GL/eglew.h>
 #include "QtEvent.h"
+#include "camera.h"
 #include "cutil.h"
 class OpenGLHDR : public QWidget
 {
@@ -71,4 +72,13 @@ private:
     // 加载和编译HDR着色器
     GLuint hdrShader;
     GLuint hdrFBO, hdrTexture, hdrRBO;
+
+
+    // Number of samples per pixel for MSAA
+    unsigned int samples = 8;
+
+    // Controls the gamma function
+    float gamma = 5.2f;
+
+    chen::Camera* camera = NULL;
 };

@@ -29,12 +29,18 @@ void check_error()
 		err = glGetError();
 	}
 }
-GLuint   CreateGpuProgram(const char* vs, const char* fs)
+GLuint   CreateGpuProgram(const char* vs, const char* fs, const char* geometryFile)
 {
 	/*GLuint vsShader = CompileShader(GL_VERTEX_SHADER, vs);
 	GLuint fsShader = CompileShader(GL_FRAGMENT_SHADER, fs);*/
 	GLuint vsShader = Compile_sharder(GL_VERTEX_SHADER, vs);
 	GLuint fsShader = Compile_sharder(GL_FRAGMENT_SHADER, fs);
+	GLuint gsShader = 0;
+	if (geometryFile)
+	{
+		gsShader = Compile_sharder(GL_GEOMETRY_SHADER, geometryFile);
+	}
+
 	//GLboolean vssh = glIsShader(vsShader);
 	//GLboolean fssh = glIsShader(fsShader);
 	check_error();
@@ -50,6 +56,10 @@ GLuint   CreateGpuProgram(const char* vs, const char* fs)
 	check_error();
 	//GL_INVALID_OPERATION
 	glAttachShader(shaderProgram, fsShader);
+	if (gsShader)
+	{
+		glAttachShader(shaderProgram, gsShader);
+	}
 	check_error();
 	/*GLenum err = glGetError();
 	printf("GL_ATTACHED_SHADERS[err = %u]\n", err);*/
@@ -82,6 +92,11 @@ GLuint   CreateGpuProgram(const char* vs, const char* fs)
 	glDetachShader(shaderProgram, fsShader);
 	check_error();
 	glDetachShader(shaderProgram, vsShader);
+	if (geometryFile)
+	{
+		glDetachShader(shaderProgram, gsShader);
+		glDeleteShader(gsShader);
+	}
 	check_error();
 	glDeleteShader(fsShader);
 	check_error();

@@ -71,84 +71,113 @@ bool OpenGLHDR::event(QEvent* event)
 bool OpenGLHDR::initializeGL()
 {
 
-	program = CreateGpuProgram("shader/vertexShader.glsl", "shader/fragmentShader.glsl");
+	program = CreateGpuProgram("shader/default.vert", "shader/default.frag", "shader/default.geom");
+	
+	// DHR
+	GLuint HDRshader = CreateGpuProgram("shader/framebuffer.vert", "shader/framebuffer.frag");
+	
+	QVector4D lightColor(100.0f, 100.0f, 100.0f, 1.0f);
+	QVector3D lightPos  (0.5f, 0.5f, 0.5f);
 	// 使用着色器程序
-	glUseProgram(program);
+	 glUseProgram(program);
 	check_error();
+	glUniform4f(glGetUniformLocation(program, "lightColor"), lightColor.x(), lightColor.y(), lightColor.z(), lightColor.w());
+	glUniform3f(glGetUniformLocation(program, "lightPos"), lightPos.x(), lightPos.y(), lightPos.z());
 	//assert(!glGetError());
-	// 获取shader 顶点pos
-	GLint posLocation = glGetAttribLocation(program, "pos");
-	GLint colorLocation = glGetAttribLocation(program, "color");
-	GLint texcoordLocation = glGetAttribLocation(program, "texcoord");
+	 glUseProgram(HDRshader);
+	 glUniform1i(glGetUniformLocation(HDRshader, "screenTexture"), 0);
+	 glUniform1f(glGetUniformLocation(HDRshader, "gamma"), gamma);
+
+	 // Enables the Depth Buffer
+	 glEnable(GL_DEPTH_TEST);
+
+	 // Enables Multisampling
+	 glEnable(GL_MULTISAMPLE);
+
+	 // Enables Cull Facing
+	 glEnable(GL_CULL_FACE);
+	 // Keeps front faces
+	 glCullFace(GL_FRONT);
+	 // Uses counter clock-wise standard
+	 glFrontFace(GL_CCW);
+
+
+	 camera = new chen::Camera();
+
+	 // 获取shader 顶点pos
+
+	//GLint posLocation = glGetAttribLocation(program, "pos");
+	//GLint colorLocation = glGetAttribLocation(program, "color");
+	//GLint texcoordLocation = glGetAttribLocation(program, "texcoord");
 
 
 	// uniform  纹理tex1
-	smp1 = glGetUniformLocation(program, "smp1");
+	//smp1 = glGetUniformLocation(program, "smp1");
 	//smp2 = glGetUniformLocation(program, "smp2");
 
 	//GLint tLocation = glGetAttribLocation(program, "t");
-	check_error();
+	//check_error();
 	//创建VAO
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	check_error();
-	VBO = CreateGLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(vertices), vertices);
-
-	//// 绑定一下 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	// shader --> 启用顶点属性
-	glEnableVertexAttribArray(posLocation);
-	check_error();
-	// 告诉shader 顶点数据排列
-	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
-	glVertexAttribPointer(
-		posLocation, // 顶点属性ID
-		3, // 几个数据构成一组
-		GL_FLOAT, // 数据类型
-		GL_FALSE, // 
-		sizeof(float) * 8, // 步长
-		(const void*)(sizeof(float) * 0) // 偏移量,第一组数据的起始位置
-	);
-	check_error();
-	// shader --> 启用顶点属性
-	glEnableVertexAttribArray(colorLocation);
-	check_error();
-	// 告诉shader 顶点数据排列
-	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
-	glVertexAttribPointer(colorLocation, 3,
-		GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 3));
-	// shader --> 启用顶点属性
-	glEnableVertexAttribArray(texcoordLocation);
-	check_error();
-	// 告诉shader 顶点数据排列
-	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
-	glVertexAttribPointer(texcoordLocation, 2,
-		GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 6));
-
-
-
-	check_error();
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
-
-	// 创建EBO
-	EBO = CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(indices), indices);
-	//////////////////////////////VAO 解绑后操作texcoord//////////////////////////////////////////
-	QImage img = QImage("images/we.jpg");
-	tex1 = CreateGLTexture(GL_TEXTURE_2D, img.width(), img.height(), GL_RGBA16F, GL_BGRA, img.bits());
-
-	//QImage img2 = QImage("assets/texcoord/we.jpg");
-	//tex2 = CreateGLTexture(GL_TEXTURE_2D, img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
-
-
-	//启用面剔除
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK); // GL_FRONT
-
-	glPolygonMode(GL_FRONT, GL_FILL);
-
+	//glGenVertexArrays(1, &VAO);
+	//glBindVertexArray(VAO);
+	//check_error();
+	//VBO = CreateGLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(vertices), vertices);
+	//
+	////// 绑定一下 
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//
+	//// shader --> 启用顶点属性
+	//glEnableVertexAttribArray(posLocation);
+	//check_error();
+	//// 告诉shader 顶点数据排列
+	////GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
+	//glVertexAttribPointer(
+	//	posLocation, // 顶点属性ID
+	//	3, // 几个数据构成一组
+	//	GL_FLOAT, // 数据类型
+	//	GL_FALSE, // 
+	//	sizeof(float) * 8, // 步长
+	//	(const void*)(sizeof(float) * 0) // 偏移量,第一组数据的起始位置
+	//);
+	//check_error();
+	//// shader --> 启用顶点属性
+	//glEnableVertexAttribArray(colorLocation);
+	//check_error();
+	//// 告诉shader 顶点数据排列
+	////GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
+	//glVertexAttribPointer(colorLocation, 3,
+	//	GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 3));
+	//// shader --> 启用顶点属性
+	//glEnableVertexAttribArray(texcoordLocation);
+	//check_error();
+	//// 告诉shader 顶点数据排列
+	////GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
+	//glVertexAttribPointer(texcoordLocation, 2,
+	//	GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 6));
+	//
+	//
+	//
+	//check_error();
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindVertexArray(0);
+	//
+	//
+	//// 创建EBO
+	//EBO = CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(indices), indices);
+	////////////////////////////////VAO 解绑后操作texcoord//////////////////////////////////////////
+	//QImage img = QImage("images/we.jpg");
+	//tex1 = CreateGLTexture(GL_TEXTURE_2D, img.width(), img.height(), GL_RGBA16F, GL_BGRA, img.bits());
+	//
+	////QImage img2 = QImage("assets/texcoord/we.jpg");
+	////tex2 = CreateGLTexture(GL_TEXTURE_2D, img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
+	//
+	//
+	////启用面剔除
+	////glEnable(GL_CULL_FACE);
+	////glCullFace(GL_BACK); // GL_FRONT
+	//
+	//glPolygonMode(GL_FRONT, GL_FILL);
+	//
 	//assert(!glGetError());
 	return true;
 }

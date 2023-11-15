@@ -102,11 +102,13 @@
     <QtRcc Include="OpenGLHDR.qrc" />
     <QtUic Include="OpenGLHDR.ui" />
     <QtMoc Include="OpenGLHDR.h" />
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="cutil.cpp" />
     <ClCompile Include="OpenGLHDR.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="cutil.h" />
     <ClInclude Include="QtEvent.h" />
   </ItemGroup>
