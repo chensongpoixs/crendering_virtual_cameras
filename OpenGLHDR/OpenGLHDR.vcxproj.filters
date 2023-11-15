@@ -43,12 +43,54 @@
     <ClCompile Include="cutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cshader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ctexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cvbo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cmesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cvao.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cebo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ccamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cutil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="QtEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cshader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ctexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cvbo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cvao.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cebo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ccamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

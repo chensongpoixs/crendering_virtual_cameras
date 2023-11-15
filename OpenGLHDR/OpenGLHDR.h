@@ -1,11 +1,14 @@
-#pragma once
+ï»¿#pragma once
 
 #include <QtWidgets/QWidget>
 #include "ui_OpenGLHDR.h"
 #include <Windows.h>
 #include <GL/eglew.h>
 #include "QtEvent.h"
+#include "cshader.h"
 #include "cutil.h"
+#include "cmesh.h"
+#include "ccamera.h"
 class OpenGLHDR : public QWidget
 {
     Q_OBJECT
@@ -13,7 +16,7 @@ class OpenGLHDR : public QWidget
 public:
     OpenGLHDR(QWidget *parent = nullptr);
     ~OpenGLHDR();
-    //  // ÉèÖÃÕâ¸ö¾Í²»ÄÜÊ¹ÓÃQTäÖÈ¾µÄÁË  ¾ÍĞèÒªÖØĞÂÊµÏÖQPaintEngineº¯Êı
+    //  // è®¾ç½®è¿™ä¸ªå°±ä¸èƒ½ä½¿ç”¨QTæ¸²æŸ“çš„äº†  å°±éœ€è¦é‡æ–°å®ç°QPaintEngineå‡½æ•°
  //setAttribute(Qt::WA_PaintOnScreen);
     virtual QPaintEngine* paintEngine() const { return NULL; }
     virtual void resizeEvent(QResizeEvent* event);
@@ -47,7 +50,7 @@ private:
 
 
     float vertices[32] = {
-        // ¶¥µã                        // ÑÕÉ«              texcoord uv
+        // é¡¶ç‚¹                        // é¢œè‰²              texcoord uv
         -0.8f, 0.8f, 0.0f,       1.0f, 0.0f, 0.0f,          0.0f, 1.0f,    // left top
         -0.8f, -0.8f, 0.0f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,       // left bottom
         0.8f, -0.8f, 0.0f,        0.0f, 0.0f, 1.0f,         1.0f, 0.0f,           // right bottom
@@ -56,19 +59,77 @@ private:
 
     GLuint VBO, VAO, EBO;
 
-    GLuint indices[6] = {
-        0,1,2, //µÚÒ»¸öÈı½ÇĞÎ
-        0, 2, 3 //µÚ¶ş¸öÈı½ÇĞÎ
+    //GLuint indices[6] = {
+    //    0,1,2, //ç¬¬ä¸€ä¸ªä¸‰è§’å½¢
+    //    0, 2, 3 //ç¬¬äºŒä¸ªä¸‰è§’å½¢
+    //};
+    // Indices for plane with texture
+    std::vector<GLuint> indices =
+    {
+        0, 1, 2,
+        0, 2, 3
     };
-
-    GLuint program;
+   // GLuint program;
     GLuint   tex1, tex2;
 
     GLint smp1, smp2;
 
 
     /// HDR
-    // ¼ÓÔØºÍ±àÒëHDR×ÅÉ«Æ÷
+    // åŠ è½½å’Œç¼–è¯‘HDRç€è‰²å™¨
     GLuint hdrShader;
     GLuint hdrFBO, hdrTexture, hdrRBO;
+
+
+
+    chen::cshader* shaderProgram;
+    chen::cshader* framebufferProgram;
+
+
+
+    // Prepare framebuffer rectangle VBO and VAO
+    GLuint rectVAO;
+    GLuint rectVBO;
+    // Vertices for plane with texture
+    std::vector<chen::Vertex> hdrvertices =
+    {
+        chen::Vertex{QVector3D(-1.0f, -1.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector2D(0.0f, 0.0f)},
+        chen::Vertex{QVector3D(-1.0f, 1.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector2D(0.0f, 1.0f)},
+        chen::Vertex{QVector3D(1.0f, 1.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector2D(1.0f, 1.0f)},
+        chen::Vertex{QVector3D(1.0f, -1.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector2D(1.0f, 0.0f)}
+    };
+    float rectangleVertices[24] =
+    {
+        //  Coords   // texCoords
+         1.0f, -1.0f,  1.0f, 0.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+        -1.0f,  1.0f,  0.0f, 1.0f,
+
+         1.0f,  1.0f,  1.0f, 1.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f,  0.0f, 1.0f
+    };
+
+    chen::ccamera* camera;
+    chen::ctexture* normalMap;
+    chen::ctexture* displacementMap;
+
+    GLuint FBO;
+    GLuint framebufferTexture;
+    GLuint RBO;
+
+
+
+    GLuint postProcessingFBO;
+    GLuint postProcessingTexture;
+
+    // Number of samples per pixel for MSAA
+    unsigned int samples = 8;
+
+    // Controls the gamma function
+    float gamma = 2.2f;
+
+    chen::cmesh* plane;
+    int width = 600;
+    int height = 400;
 };

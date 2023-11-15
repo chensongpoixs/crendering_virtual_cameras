@@ -102,12 +102,26 @@
     <QtRcc Include="OpenGLHDR.qrc" />
     <QtUic Include="OpenGLHDR.ui" />
     <QtMoc Include="OpenGLHDR.h" />
+    <ClCompile Include="ccamera.cpp" />
+    <ClCompile Include="cebo.cpp" />
+    <ClCompile Include="cmesh.cpp" />
+    <ClCompile Include="cshader.cpp" />
+    <ClCompile Include="ctexture.cpp" />
     <ClCompile Include="cutil.cpp" />
+    <ClCompile Include="cvao.cpp" />
+    <ClCompile Include="cvbo.cpp" />
     <ClCompile Include="OpenGLHDR.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ccamera.h" />
+    <ClInclude Include="cebo.h" />
+    <ClInclude Include="cmesh.h" />
+    <ClInclude Include="cshader.h" />
+    <ClInclude Include="ctexture.h" />
     <ClInclude Include="cutil.h" />
+    <ClInclude Include="cvao.h" />
+    <ClInclude Include="cvbo.h" />
     <ClInclude Include="QtEvent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
