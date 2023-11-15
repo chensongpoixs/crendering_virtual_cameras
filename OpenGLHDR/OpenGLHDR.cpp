@@ -71,7 +71,7 @@ bool OpenGLHDR::event(QEvent* event)
 bool OpenGLHDR::initializeGL()
 {
 
-	program = CreateGpuProgram("assets/hdr/vertexShader.glsl", "assets/hdr/fragmentShader.glsl");
+	program = CreateGpuProgram("shader/vertexShader.glsl", "shader/fragmentShader.glsl");
 	// 使用着色器程序
 	glUseProgram(program);
 	check_error();
@@ -136,8 +136,8 @@ bool OpenGLHDR::initializeGL()
 	// 创建EBO
 	EBO = CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(indices), indices);
 	//////////////////////////////VAO 解绑后操作texcoord//////////////////////////////////////////
-	QImage img = QImage("assets/we.jpg");
-	tex1 = CreateGLTexture(GL_TEXTURE_2D, img.width(), img.height(), GL_RGBA, GL_BGRA, img.bits());
+	QImage img = QImage("images/we.jpg");
+	tex1 = CreateGLTexture(GL_TEXTURE_2D, img.width(), img.height(), GL_RGBA16F, GL_BGRA, img.bits());
 
 	//QImage img2 = QImage("assets/texcoord/we.jpg");
 	//tex2 = CreateGLTexture(GL_TEXTURE_2D, img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());

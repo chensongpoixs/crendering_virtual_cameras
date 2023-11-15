@@ -110,6 +110,13 @@
     <ClInclude Include="cutil.h" />
     <ClInclude Include="QtEvent.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ReShade.fxh" />
+    <None Include="shader\fragmentShader.glsl" />
+    <None Include="shader\hdr_shader.frag" />
+    <None Include="shader\hdr_shader.vert" />
+    <None Include="shader\vertexShader.glsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />

@@ -21,6 +21,9 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{3a4b3365-d5ee-4efe-b6de-33a19a8c4063}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="OpenGLHDR.qrc">
@@ -51,5 +54,22 @@
     <ClInclude Include="QtEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader\fragmentShader.glsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="shader\hdr_shader.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="shader\hdr_shader.vert">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="shader\vertexShader.glsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="ReShade.fxh">
+      <Filter>shader</Filter>
+    </None>
   </ItemGroup>
 </Project>
