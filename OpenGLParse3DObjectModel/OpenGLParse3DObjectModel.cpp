@@ -10,7 +10,7 @@
 #include <QTimer>
 #include <QDateTime>
 #include "OpenGLParse3DObjectModel.h"
-
+#include <cshader.h>
 OpenGLParse3DObjectModel::OpenGLParse3DObjectModel(QWidget *parent)
     : QWidget(parent, Qt::MSWindowsOwnDC)
 {
@@ -156,88 +156,90 @@ bool OpenGLParse3DObjectModel::event(QEvent* event)
 
 bool OpenGLParse3DObjectModel::initializeGL()
 {
-
-	program = CreateGpuProgram("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
+	mesh =  chen::LoadObjModel("assets/teapot.obj", true/*EBO 开启就不需要内存空间*/);
+	shader = new chen::cshader("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
+	//program = chen::CreateGpuProgram("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
 
 	// 使用着色器程序
-	glUseProgram(program);
-	check_error();
+	//glUseProgram(program);
+	//chen::check_error();
 	//assert(!glGetError());
 	// 获取shader 顶点pos
-	GLint posLocation = glGetAttribLocation(program, "pos");
-	GLint colorLocation = glGetAttribLocation(program, "color");
-	GLint texcoordLocation = glGetAttribLocation(program, "texcoord");
+	//GLint posLocation = glGetAttribLocation(program, "pos");
+	//GLint colorLocation = glGetAttribLocation(program, "color");
+	//GLint texcoordLocation = glGetAttribLocation(program, "texcoord");
 
 
-	// uniform  纹理tex1
-	smp1 = glGetUniformLocation(program, "smp1");
-	smp2 = glGetUniformLocation(program, "smp2");
+	//// uniform  纹理tex1
+	//smp1 = glGetUniformLocation(program, "smp1");
+	//smp2 = glGetUniformLocation(program, "smp2");
 
 
-	modelLocation = glGetUniformLocation(program, "modelMat");;
-	viewLocation = glGetUniformLocation(program, "viewMat");;
-	projLocation = glGetUniformLocation(program, "projMat");;
+	//modelLocation = glGetUniformLocation(program, "modelMat");;
+	//viewLocation = glGetUniformLocation(program, "viewMat");;
+	//projLocation = glGetUniformLocation(program, "projMat");;
 
 	//GLint tLocation = glGetAttribLocation(program, "t");
-	check_error();
+	chen::check_error();
 	//创建VAO
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
-	check_error();
-	VBO = CreateGLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(vertices), vertices);
+	chen::check_error();
+	VBO = chen::CreateGLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, mesh->vertexCount * sizeof(struct chen::Vertex), mesh->vertices);
 
 	//// 绑定一下 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 	// shader --> 启用顶点属性
-	glEnableVertexAttribArray(posLocation);
-	check_error();
+	glEnableVertexAttribArray(shader->posLocation);
+	chen::check_error();
 	// 告诉shader 顶点数据排列
 	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
 	glVertexAttribPointer(
-		posLocation, // 顶点属性ID
+		shader->posLocation, // 顶点属性ID
 		3, // 几个数据构成一组
 		GL_FLOAT, // 数据类型
 		GL_FALSE, // 
 		sizeof(float) * 8, // 步长
 		(const void*)(sizeof(float) * 0) // 偏移量,第一组数据的起始位置
 	);
-	check_error();
+	chen::check_error();
 	// shader --> 启用顶点属性
-	glEnableVertexAttribArray(colorLocation);
-	check_error();
+	glEnableVertexAttribArray(shader->colorLocation);
+	chen::check_error();
 	// 告诉shader 顶点数据排列
 	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
-	glVertexAttribPointer(colorLocation, 3,
+	glVertexAttribPointer(shader->colorLocation, 3,
 		GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 3));
 	// shader --> 启用顶点属性
-	glEnableVertexAttribArray(texcoordLocation);
-	check_error();
+	glEnableVertexAttribArray(shader->texcoordLocation);
+	chen::check_error();
 	// 告诉shader 顶点数据排列
 	//GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
-	glVertexAttribPointer(texcoordLocation, 2,
+	glVertexAttribPointer(shader->texcoordLocation, 2,
 		GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 6));
 
 
 
-	check_error();
+	chen::check_error();
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
 
 	// 创建EBO
-	EBO = CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, sizeof(indices), indices);
+	EBO = chen::CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, mesh->indexCount * sizeof(uint32_t), mesh->indices);
 	//////////////////////////////VAO 解绑后操作texcoord//////////////////////////////////////////
 	QImage img = QImage("assets/parse3dobjectmodel/we.jpg");
-	tex1 = CreateGLTexture(GL_TEXTURE_2D, img.width(), img.height(), GL_RGBA, GL_BGRA, img.bits());
+	tex1 = new chen::ctexture( img.width(), img.height(), GL_RGBA, GL_BGRA, img.bits());
 
 	QImage img2 = QImage("assets/parse3dobjectmodel/we.jpg");
-	tex2 = CreateGLTexture(GL_TEXTURE_2D, img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
+	tex2 = new chen::ctexture(img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
 
-
+	//开启深度测试
+	glEnable(GL_DEPTH_TEST);
 	//启用面剔除
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK); // GL_FRONT
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK); // GL_FRONT
 
 	glPolygonMode(GL_FRONT, GL_FILL);
 
@@ -325,21 +327,23 @@ void OpenGLParse3DObjectModel::Renderer()
 	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// 激活shader程序
-	glUseProgram(program);
-	//激活纹理0号单元
-	glActiveTexture(GL_TEXTURE0);
-	//绑定纹理单元
-	glBindTexture(GL_TEXTURE_2D, tex1);
-	// 因为激活是0号单元所以使用0
-	glUniform1i(smp1, 0);
+	//glUseProgram(program);
+	shader->Apply();
+	shader->SetTexture2D("smp1", tex1);
+	////激活纹理0号单元
+	//glActiveTexture(GL_TEXTURE0);
+	////绑定纹理单元
+	//glBindTexture(GL_TEXTURE_2D, tex1);
+	//// 因为激活是0号单元所以使用0
+	//glUniform1i(smp1, 0);
 
-
+	shader->SetTexture2D("smp2", tex2);
 	//激活纹理0号单元
-	glActiveTexture(GL_TEXTURE5);
-	//绑定纹理单元
-	glBindTexture(GL_TEXTURE_2D, tex2);
-	// 因为激活是0号单元所以使用0
-	glUniform1i(smp2, 5);
+	//glActiveTexture(GL_TEXTURE5);
+	////绑定纹理单元
+	//glBindTexture(GL_TEXTURE_2D, tex2);
+	//// 因为激活是0号单元所以使用0
+	//glUniform1i(smp2, 5);
 
 	// 模型矩阵
 	QMatrix4x4 modelMat;
@@ -351,9 +355,9 @@ void OpenGLParse3DObjectModel::Renderer()
 	// 移动模型
 	modelMat.translate(0, 0, -2);
 	// 转动
-	modelMat.rotate(30, QVector3D(0, 0, 1));
+	//modelMat.rotate(30, QVector3D(0, 0, 1));
 	// 
-	//modelMat.scale(2,1, 1);
+	modelMat.scale(1,1, 1);
 
 	// 眼睛的位置
 	/*QVector3D eyePoint = QVector3D(0, 0, 0);
@@ -367,9 +371,9 @@ void OpenGLParse3DObjectModel::Renderer()
 	//camera.SetRotation(0, 180, 0);
 
 	//设置矩阵ｉＤ
-	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, modelMat.constData());
-	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, camera.GetViewMat().constData());
-	glUniformMatrix4fv(projLocation, 1, GL_FALSE, projMat.constData());
+	glUniformMatrix4fv(shader->modelLocation, 1, GL_FALSE, modelMat.constData());
+	glUniformMatrix4fv(shader->viewLocation, 1, GL_FALSE, camera.GetViewMat().constData());
+	glUniformMatrix4fv(shader->projLocation, 1, GL_FALSE, projMat.constData());
 
 
 
@@ -378,11 +382,11 @@ void OpenGLParse3DObjectModel::Renderer()
 	glBindVertexArray(VAO);
 	// glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//绘制模式  三个顶点
-	//  glDrawArrays(GL_TRIANGLES, 0, 6);
+	  glDrawArrays(GL_TRIANGLES, 0, mesh->indexCount);
 	// 绑定EBO
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);  //EBO 开启就不需要内存空间
 	// EBO绘制的方式 
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, mesh->indexCount, GL_UNSIGNED_INT, NULL);
 	//glDrawElements(GL_TRIANGLES, 3, GL_FLOAT, 0);
 	// 绑定VAO2
 	//glBindVertexArray(VAO2);

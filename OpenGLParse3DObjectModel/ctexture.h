@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************
-created: 		2023-11-13
+created: 		2023-11-15
 
 author:			chensong
 
@@ -23,63 +23,29 @@ purpose:		camera
 ************************************************************************************************/
 
 
-#ifndef _C_UTIL_H_
-#define _C_UTIL_H_
+#ifndef _C_TEXTURE_H_
+#define _C_TEXTURE_H_
 #include <Windows.h>
 #include <stdint.h>
 #include <GL/eglew.h>
 #include <vector>
 namespace chen {
-
-	char* load_file_context(const char* url);
-	void check_error();
-
-	GLuint  CreateGpuProgram(const char* vs, const char* fs);
-	GLint Compile_sharder(GLenum shaderType, const char* url);
-
-
-	//
-
-	GLuint CreateGLBuffer(GLenum target, GLenum usage, GLsizeiptr size, const void* data);
-
-	GLuint CreateGLTexture(GLenum target, int width, int height, GLint internalformat, GLint format, const void* data);
-	struct VertexAttri
+	class ctexture
 	{
-		float x;
-		float y;
-		float z;
+	public:
+		explicit ctexture(int width, int height, GLint internalFormat, GLint format, const void * data);
+		~ctexture();
+
+	public:
+
+
+		int width;
+		int height;
+		GLint internalFormat;
+		GLint format;
+		GLuint texID;
 	};
-	struct VertexIndex
-	{
-		int posIndex;
-		int texIndex;
-		int norIndex;
-	};
-
-	struct Vertex
-	{
-		float position[3];
-		float normal[3];
-		float texcoord[2];
-	};
-	struct Mesh
-	{
-		uint32_t indexCount = 0;
-		uint32_t* indices;
-		uint32_t vertexCount = 0;
-		Vertex* vertices;
-		uint32_t  faceCount = 0;
-	};
-
-	struct Mesh* LoadObjModel(const char* url, bool isDropRepeat = false);
-} // namespace chen
+}
 
 
-
-
-
-
-
-
-
-#endif // _C_UTIL_H_
+#endif //

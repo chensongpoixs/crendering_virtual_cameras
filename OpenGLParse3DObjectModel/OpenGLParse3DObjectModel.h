@@ -7,6 +7,8 @@
 #include "QtEvent.h"
 #include "cutil.h"
 #include "camera.h"
+#include "cshader.h"
+#include "ctexture.h"
 class OpenGLParse3DObjectModel : public QWidget
 {
     Q_OBJECT
@@ -56,30 +58,22 @@ private:
 
 
 
-    float vertices[32] = {
-        // 顶点                        // 颜色              texcoord uv
-        -0.5f, 0.5f, 0.0f,       1.0f, 0.0f, 0.0f,          0.0f, 1.0f,    // left top
-        -0.5f, -0.5f, 0.0f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,       // left bottom
-        0.5f, -0.5f, 0.0f,        0.0f, 0.0f, 1.0f,         1.0f, 0.0f,           // right bottom
-        0.5f, 0.5f, 0.0f,         1.0f, 1.0f, 0.0f,          1.0f, 1.0f         // right top 
-    };
+    
 
     GLuint VBO, VAO, EBO;
 
-    GLuint indices[6] = {
-        0,1,2, //第一个三角形
-        0, 2, 3 //第二个三角形
-    };
+     
+    chen::cshader* shader = NULL;
+    //GLuint program;
+    chen::ctexture* tex1;
+    chen::ctexture *tex2;
 
-    GLuint program;
-    GLuint   tex1, tex2;
-
-    GLint smp1, smp2;
+    //GLint smp1, smp2;
 
 
-    GLuint modelLocation;
-    GLuint viewLocation;
-    GLuint projLocation;
+   // GLuint modelLocation;
+  //  GLuint viewLocation;
+  //  GLuint projLocation;
 
 
     chen::Camera camera;
@@ -98,4 +92,7 @@ private:
 
 
     QPoint lastPoint;
+
+
+    struct chen::Mesh* mesh = NULL;
 };

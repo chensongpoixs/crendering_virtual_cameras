@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************
-created: 		2023-11-13
+created: 		2023-11-15
 
 author:			chensong
 
@@ -21,65 +21,75 @@ purpose:		camera
 沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
 ************************************************************************************************/
-
-
-#ifndef _C_UTIL_H_
-#define _C_UTIL_H_
-#include <Windows.h>
-#include <stdint.h>
-#include <GL/eglew.h>
-#include <vector>
+#include "cshader.h"
+#include "cutil.h"
 namespace chen {
 
-	char* load_file_context(const char* url);
-	void check_error();
-
-	GLuint  CreateGpuProgram(const char* vs, const char* fs);
-	GLint Compile_sharder(GLenum shaderType, const char* url);
 
 
-	//
-
-	GLuint CreateGLBuffer(GLenum target, GLenum usage, GLsizeiptr size, const void* data);
-
-	GLuint CreateGLTexture(GLenum target, int width, int height, GLint internalformat, GLint format, const void* data);
-	struct VertexAttri
+	cshader::cshader(const char* vsUrl, const char* fsUrl)
 	{
-		float x;
-		float y;
-		float z;
-	};
-	struct VertexIndex
+
+		program = chen::CreateGpuProgram(vsUrl, fsUrl);
+
+		// 使用着色器程序
+		//glUseProgram(program);
+		  posLocation = glGetAttribLocation(program, "pos");
+		  colorLocation = glGetAttribLocation(program, "color");
+		  texcoordLocation = glGetAttribLocation(program, "texcoord");
+
+
+		// uniform  纹理tex1
+		//smp1 = glGetUniformLocation(program, "smp1");
+	//	smp2 = glGetUniformLocation(program, "smp2");
+
+
+		modelLocation = glGetUniformLocation(program, "modelMat");;
+		viewLocation = glGetUniformLocation(program, "viewMat");;
+		projLocation = glGetUniformLocation(program, "projMat");;
+	}
+
+	cshader::~cshader()
 	{
-		int posIndex;
-		int texIndex;
-		int norIndex;
-	};
+		glDeleteProgram(program);
+	}
 
-	struct Vertex
+	void cshader::SetTexture2D(const char* locationName, ctexture* texture)
 	{
-		float position[3];
-		float normal[3];
-		float texcoord[2];
-	};
-	struct Mesh
+		int unit = -1;
+
+		for (int i = 0; i < MAX_TEXTURE_SIZE; ++i)
+		{
+			if (!textureUnit[i])
+			{
+				unit = i;
+				textureUnit[i] = true;
+				break;
+			}
+		}
+		if (unit < 0)
+		{
+			throw;
+		}
+
+		GLenum textureID = GL_TEXTURE0 + unit;
+
+		// 激活
+		glActiveTexture(textureID);
+		glBindTexture(GL_TEXTURE_2D, texture->texID);
+		GLint location = glGetUniformLocation(program, locationName);
+		if (location < 0)
+		{
+			throw;
+		}
+		// 纹理单元和shader中tex关联起来
+		glUniform1i(location, unit);
+	}
+
+	void cshader::Apply()
 	{
-		uint32_t indexCount = 0;
-		uint32_t* indices;
-		uint32_t vertexCount = 0;
-		Vertex* vertices;
-		uint32_t  faceCount = 0;
-	};
+		memset(textureUnit, 0, sizeof(textureUnit));
+		glUseProgram(program);
+	}
 
-	struct Mesh* LoadObjModel(const char* url, bool isDropRepeat = false);
-} // namespace chen
-
-
-
-
-
-
-
-
-
-#endif // _C_UTIL_H_
+}

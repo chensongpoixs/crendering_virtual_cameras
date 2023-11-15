@@ -21,6 +21,9 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{f5a9cc91-2499-4e2c-b029-f3e67547f869}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="OpenGLParse3DObjectModel.qrc">
@@ -46,6 +49,12 @@
     <ClCompile Include="cutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cshader.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="ctexture.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -56,6 +65,12 @@
     </ClInclude>
     <ClInclude Include="QtEvent.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cshader.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="ctexture.h">
+      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
