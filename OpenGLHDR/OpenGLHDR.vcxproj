@@ -102,11 +102,15 @@
     <QtRcc Include="OpenGLHDR.qrc" />
     <QtUic Include="OpenGLHDR.ui" />
     <QtMoc Include="OpenGLHDR.h" />
+<<<<<<< HEAD
     <ClCompile Include="ccamera.cpp" />
     <ClCompile Include="cebo.cpp" />
     <ClCompile Include="cmesh.cpp" />
     <ClCompile Include="cshader.cpp" />
     <ClCompile Include="ctexture.cpp" />
+=======
+    <ClCompile Include="camera.cpp" />
+>>>>>>> 57f668359059e25a807a7659f9ca066108354637
     <ClCompile Include="cutil.cpp" />
     <ClCompile Include="cvao.cpp" />
     <ClCompile Include="cvbo.cpp" />
@@ -114,15 +118,26 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClInclude Include="ccamera.h" />
     <ClInclude Include="cebo.h" />
     <ClInclude Include="cmesh.h" />
     <ClInclude Include="cshader.h" />
     <ClInclude Include="ctexture.h" />
+=======
+    <ClInclude Include="camera.h" />
+>>>>>>> 57f668359059e25a807a7659f9ca066108354637
     <ClInclude Include="cutil.h" />
     <ClInclude Include="cvao.h" />
     <ClInclude Include="cvbo.h" />
     <ClInclude Include="QtEvent.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReShade.fxh" />
+    <None Include="shader\fragmentShader.glsl" />
+    <None Include="shader\hdr_shader.frag" />
+    <None Include="shader\hdr_shader.vert" />
+    <None Include="shader\vertexShader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

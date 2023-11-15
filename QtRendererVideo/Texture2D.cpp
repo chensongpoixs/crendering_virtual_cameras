@@ -1,3 +1,4 @@
+
 #include "Texture2D.h"
 
 Texture2D::Texture2D(int width, int height, GLint internalFormat, GLint format, const void *data)

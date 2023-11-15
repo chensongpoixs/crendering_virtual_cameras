@@ -324,6 +324,7 @@ namespace chen
 						index = vertices.size();
 						vertices.push_back(vi);
 					}
+					//顶点数据必须的
 					indices.push_back(index);
 				}
 			}

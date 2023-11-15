@@ -1,4 +1,5 @@
-﻿/***********************************************************************************************
+﻿#include "..\OpenGLHDR\cshader.h"
+/***********************************************************************************************
 created: 		2023-11-15
 
 author:			chensong
@@ -48,6 +49,8 @@ namespace chen {
 		viewLocation = glGetUniformLocation(program, "viewMat");;
 		projLocation = glGetUniformLocation(program, "projMat");;
 	}
+
+	
 
 	cshader::~cshader()
 	{

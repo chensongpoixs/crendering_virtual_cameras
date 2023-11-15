@@ -382,7 +382,7 @@ void OpenGLParse3DObjectModel::Renderer()
 	glBindVertexArray(VAO);
 	// glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//绘制模式  三个顶点
-	  glDrawArrays(GL_TRIANGLES, 0, mesh->indexCount);
+	//  glDrawArrays(GL_TRIANGLES, 0, mesh->indexCount);
 	// 绑定EBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);  //EBO 开启就不需要内存空间
 	// EBO绘制的方式 
