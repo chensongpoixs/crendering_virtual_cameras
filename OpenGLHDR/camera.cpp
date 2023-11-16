@@ -1,91 +1,118 @@
-﻿/***********************************************************************************************
-created: 		2023-11-13
-
-author:			chensong
-
-purpose:		camera
-
-输赢不重要，答案对你们有什么意义才重要。
-
-光阴者，百代之过客也，唯有奋力奔跑，方能生风起时，是时代造英雄，英雄存在于时代。或许世人道你轻狂，可你本就年少啊。 看护好，自己的理想和激情。
-
-
-我可能会遇到很多的人，听他们讲好2多的故事，我来写成故事或编成歌，用我学来的各种乐器演奏它。
-然后还可能在一个国家遇到一个心仪我的姑娘，她可能会被我帅气的外表捕获，又会被我深邃的内涵吸引，在某个下雨的夜晚，她会全身淋透然后要在我狭小的住处换身上的湿衣服。
-3小时候后她告诉我她其实是这个国家的公主，她愿意向父皇求婚。我不得已告诉她我是穿越而来的男主角，我始终要回到自己的世界。
-然后我的身影慢慢消失，我看到她眼里的泪水，心里却没有任何痛苦，我才知道，原来我的心被丢掉了，我游历全世界的原因，就是要找回自己的本心。
-于是我开始有意寻找各种各样失去心的人，我变成一块砖头，一颗树，一滴水，一朵白云，去听大家为什么会失去自己的本心。
-我发现，刚出生的宝宝，本心还在，慢慢的，他们的本心就会消失，收到了各种黑暗之光的侵蚀。
-从一次争论，到嫉妒和悲愤，还有委屈和痛苦，我看到一只只无形的手，把他们的本心扯碎，蒙蔽，偷走，再也回不到主人都身边。
-我叫他本心猎手。他可能是和宇宙同在的级别 但是我并不害怕，我仔细回忆自己平淡的一生 寻找本心猎手的痕迹。
-沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
-安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
-************************************************************************************************/
-
-#include "camera.h"
-namespace chen {
-
-
-	static const float PI = 3.14159266;
-	Camera::Camera()
-	{
-
-		up.setX(0);
-		up.setY(1);
-		up.setZ(0);
-
-		SetPosition(0 , 0, 0);
-		SetRotation(0, 0, 0);
-	}
-
-	Camera::~Camera()
-	{
-	}
-
-	void Camera::SetPosition(float x, float y, float z)
-	{
-		position.setX(x);
-		position.setY(y);
-		position.setZ(z);
-	}
-
-	void Camera::SetRotation(float pitch, float yaw, float roll  )
-	{
-		rotation.setX(pitch);
-		rotation.setY(yaw);
-		rotation.setZ(roll);
+#include"Camera.h"
 
 
 
-		// x = cos(pitch) * sin(yam);
-		// y = sin(pitch);
-		// z = cos(pitch) * cos(yaw);
-
-		forward.setX(cos(pitch * PI / 180) * sin(yaw * PI / 180));
-		forward.setY(sin(pitch * PI / 180));
-		forward.setZ(cos(pitch * PI / 180) * cos(yaw * PI / 180));
-		forward = forward.normalized();
-	}
-
-	void Camera::Translate(float x, float y, float z)
-	{
-		position += forward * z;
-		position += QVector3D::crossProduct(forward, up) * x;
-		position += up * y;
-
-
-	}
-
-
-	void Camera::Rotate(float pitch, float yaw, float roll)
-	{
-		SetRotation(rotation.x() + pitch, rotation.y() + yaw, rotation.z() + roll);
-	}
-
-	QMatrix4x4 Camera::GetViewMat()
-	{
-		QMatrix4x4 mat;
-		mat.lookAt(position, position  +forward, up);
-		return mat;
-	}
+Camera::Camera(int width, int height, glm::vec3 position)
+{
+	Camera::width = width;
+	Camera::height = height;
+	Position = position;
 }
+
+void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
+{
+	// Initializes matrices since otherwise they will be the null matrix
+	glm::mat4 view = glm::mat4(1.0f);
+	glm::mat4 projection = glm::mat4(1.0f);
+
+	// Makes camera look in the right direction from the right position
+	view = glm::lookAt(Position, Position + Orientation, Up);
+	// Adds perspective to the scene
+	projection = glm::perspective(glm::radians(FOVdeg), (float)width / height, nearPlane, farPlane);
+
+	// Sets new camera matrix
+	cameraMatrix = projection * view;
+}
+
+void Camera::Matrix(Shader& shader, const char* uniform)
+{
+	// Exports camera matrix
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+}
+
+
+
+//void Camera::Inputs(GLFWwindow* window)
+//{
+//	// Handles key inputs
+//	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+//	{
+//		Position += speed * Orientation;
+//	}
+//	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+//	{
+//		Position += speed * -glm::normalize(glm::cross(Orientation, Up));
+//	}
+//	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+//	{
+//		Position += speed * -Orientation;
+//	}
+//	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+//	{
+//		Position += speed * glm::normalize(glm::cross(Orientation, Up));
+//	}
+//	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+//	{
+//		Position += speed * Up;
+//	}
+//	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+//	{
+//		Position += speed * -Up;
+//	}
+//	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+//	{
+//		speed = 0.4f;
+//	}
+//	else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+//	{
+//		speed = 0.1f;
+//	}
+//
+//
+//	// Handles mouse inputs
+//	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+//	{
+//		// Hides mouse cursor
+//		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+//
+//		// Prevents camera from jumping on the first click
+//		if (firstClick)
+//		{
+//			glfwSetCursorPos(window, (width / 2), (height / 2));
+//			firstClick = false;
+//		}
+//
+//		// Stores the coordinates of the cursor
+//		double mouseX;
+//		double mouseY;
+//		// Fetches the coordinates of the cursor
+//		glfwGetCursorPos(window, &mouseX, &mouseY);
+//
+//		// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
+//		// and then "transforms" them into degrees 
+//		float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
+//		float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
+//
+//		// Calculates upcoming vertical change in the Orientation
+//		glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
+//
+//		// Decides whether or not the next vertical Orientation is legal or not
+//		if (abs(glm::angle(newOrientation, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+//		{
+//			Orientation = newOrientation;
+//		}
+//
+//		// Rotates the Orientation left and right
+//		Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
+//
+//		// Sets mouse cursor to the middle of the screen so that it doesn't end up roaming around
+//		glfwSetCursorPos(window, (width / 2), (height / 2));
+//	}
+//	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+//	{
+//		// Unhides cursor since camera is not looking around anymore
+//		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+//		// Makes sure the next time the camera looks around it doesn't jump
+//		firstClick = true;
+//	}
+//}

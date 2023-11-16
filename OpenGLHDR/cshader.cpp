@@ -47,7 +47,7 @@ namespace chen {
 			in.close();
 			return(contents);
 		}
-		throw(errno);
+ 		throw(errno);
 	}
 
 
@@ -68,7 +68,7 @@ namespace chen {
 		// Compile the Vertex Shader into machine code
 		glCompileShader(vertexShader);
 		// Checks if Shader compiled succesfully
-		_compile_errors(vertexShader, "VERTEX");
+		//_compile_errors(vertexShader, "VERTEX");
 
 		// Create Fragment Shader Object and get its reference
 		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -77,7 +77,7 @@ namespace chen {
 		// Compile the Vertex Shader into machine code
 		glCompileShader(fragmentShader);
 		// Checks if Shader compiled succesfully
-		_compile_errors(fragmentShader, "FRAGMENT");
+		//_compile_errors(fragmentShader, "FRAGMENT");
 
 		// Create Shader Program Object and get its reference
 		programID = glCreateProgram();
@@ -87,8 +87,10 @@ namespace chen {
 		// Wrap-up/Link all the shaders together into the Shader Program
 		glLinkProgram(programID);
 		// Checks if Shaders linked succesfully
-		_compile_errors(programID, "PROGRAM");
-
+		//_compile_errors(programID, "PROGRAM");
+		glDetachShader(programID, vertexShader);
+		glDetachShader(programID, fragmentShader);
+		//glDetachShader(programID, geometryShader);
 		// Delete the now useless Vertex and Fragment Shader objects
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
@@ -107,17 +109,22 @@ namespace chen {
 
 		// Create Vertex Shader Object and get its reference
 		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		check_error();
 		// Attach Vertex Shader source to the Vertex Shader Object
 		glShaderSource(vertexShader, 1, &vertexSource, NULL);
+		check_error();
 		// Compile the Vertex Shader into machine code
 		glCompileShader(vertexShader);
+		check_error();
 		// Checks if Shader compiled succesfully
 		_compile_errors(vertexShader, "VERTEX");
 
 		// Create Fragment Shader Object and get its reference
 		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		check_error();
 		// Attach Fragment Shader source to the Fragment Shader Object
 		glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+		check_error();
 		// Compile the Fragment Shader into machine code
 		glCompileShader(fragmentShader);
 		// Checks if Shader compiled succesfully
@@ -125,12 +132,14 @@ namespace chen {
 
 		// Create Geometry Shader Object and get its reference
 		GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+		check_error();
 		// Attach Geometry Shader source to the Fragment Shader Object
 		glShaderSource(geometryShader, 1, &geometrySource, NULL);
+		check_error();
 		// Compile the Geometry Shader into machine code
 		glCompileShader(geometryShader);
 		// Checks if Shader compiled succesfully
-		_compile_errors(geometryShader, "GEOMETRY");
+		//_compile_errors(geometryShader, "GEOMETRY");
 
 		// Create Shader Program Object and get its reference
 		programID = glCreateProgram();
@@ -138,15 +147,23 @@ namespace chen {
 		glAttachShader(programID, vertexShader);
 		glAttachShader(programID, fragmentShader);
 		glAttachShader(programID, geometryShader);
+		check_error();
 		// Wrap-up/Link all the shaders together into the Shader Program
 		glLinkProgram(programID);
 		// Checks if Shaders linked succesfully
-		_compile_errors(programID, "PROGRAM");
-
+		//_compile_errors(programID, "PROGRAM");
+		check_error();
+		glDetachShader(programID, vertexShader);
+		check_error();
+		glDetachShader(programID, fragmentShader);
+		check_error();
+		glDetachShader(programID, geometryShader);
+		check_error();
 		// Delete the now useless Vertex and Fragment Shader objects
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
 		glDeleteShader(geometryShader);
+		check_error();
 	}
 
 

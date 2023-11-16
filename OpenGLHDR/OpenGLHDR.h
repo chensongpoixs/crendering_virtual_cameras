@@ -5,14 +5,18 @@
 #include <Windows.h>
 #include <GL/eglew.h>
 #include "QtEvent.h"
-<<<<<<< HEAD
 #include "cshader.h"
-=======
-#include "camera.h"
->>>>>>> 57f668359059e25a807a7659f9ca066108354637
+//#include "camera.h"
 #include "cutil.h"
 #include "cmesh.h"
 #include "ccamera.h"
+#include "shaderClass.h"
+#include "VBO.h"
+#include "VAO.h"
+#include "EBO.h"
+#include "Camera.h"
+#include "Texture.h"
+#include "Mesh.h"
 class OpenGLHDR : public QWidget
 {
     Q_OBJECT
@@ -24,6 +28,17 @@ public:
  //setAttribute(Qt::WA_PaintOnScreen);
     virtual QPaintEngine* paintEngine() const { return NULL; }
     virtual void resizeEvent(QResizeEvent* event);
+
+
+    void showEvent(QShowEvent* event);
+
+
+    void keyPressEvent(QKeyEvent* event);
+    void keyReleaseEvent(QKeyEvent* event);
+
+
+    void mousePressEvent(QMouseEvent* event);
+    void mouseMoveEvent(QMouseEvent* event);
 public:
     void Renderer();
     bool event(QEvent* event);
@@ -84,14 +99,20 @@ private:
     GLuint hdrShader;
     GLuint hdrFBO, hdrTexture, hdrRBO;
 
-
-<<<<<<< HEAD
+ 
 
     chen::cshader* shaderProgram;
     chen::cshader* framebufferProgram;
 
 
 
+    Shader* shader_ptr;
+    Shader* framebufferprogram_ptr;
+
+    Camera* camera_ptr;
+    Mesh* mesh_ptr;
+    Texture* normalMap_ptr;
+    Texture *displacementMap_ptr;
     // Prepare framebuffer rectangle VBO and VAO
     GLuint rectVAO;
     GLuint rectVBO;
@@ -128,21 +149,21 @@ private:
     GLuint postProcessingFBO;
     GLuint postProcessingTexture;
 
-=======
->>>>>>> 57f668359059e25a807a7659f9ca066108354637
+//=======
+//>>>>>>> 57f668359059e25a807a7659f9ca066108354637
     // Number of samples per pixel for MSAA
     unsigned int samples = 8;
 
     // Controls the gamma function
-<<<<<<< HEAD
-    float gamma = 2.2f;
+//<<<<<<< HEAD
+    float gamma = 4.2f;
 
     chen::cmesh* plane;
-    int width = 600;
-    int height = 400;
-=======
-    float gamma = 5.2f;
+    int width = 800;
+    int height = 800;
+//=======
+  //  float gamma = 5.2f;
 
-    chen::Camera* camera = NULL;
->>>>>>> 57f668359059e25a807a7659f9ca066108354637
+ //   chen::Camera* camera = NULL;/*
+//>>>>>>> 57f668359059e25a807a7659f9ca066108354637*/
 };

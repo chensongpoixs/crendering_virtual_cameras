@@ -25,15 +25,15 @@ purpose:		camera
 #include "cmesh.h"
 #include "cebo.h"
 #include <QMatrix4x4>
-#include <QMatrix>
+//#include <QMatrix>
 namespace chen {
 
 
 	cmesh::cmesh(std::vector <Vertex>  vertices, std::vector <GLuint>  indices, std::vector <ctexture>  textures)
 	{
-		cmesh::vertices = vertices;
-		cmesh::indices = indices;
-		cmesh::textures = textures;
+		this->vertices = vertices;
+		this->indices = indices;
+		this->textures = textures;
 
 		vao.bind();
 		// Generates Vertex Buffer Object and links it to vertices
@@ -82,43 +82,48 @@ namespace chen {
 		}
 
 		// Take care of the camera Matrix
-		glUniform3f(glGetUniformLocation(shader->programID, "camPos"),  camera->Position.x(), camera->Position.y(), camera->Position.z());
+		glUniform3f(glGetUniformLocation(shader->programID, "camPos"), 0.0f, 0.0f, 2.0f /*camera->Position.x(), camera->Position.y(), camera->Position.z()*/);
 		camera->Matrix(shader, "camMatrix");
 		 
 			// Initialize matrices
-		QMatrix4x4 trans(1.0f, 0.0f, 0.0f, 0.0f, 
+		//QMatrix4x4 trans(1.0f, 0.0f, 0.0f, 0.0f, 
+		//				 0.0f, 1.0f, 0.0f, 0.0f,
+		//				 0.0f, 0.0f, 1.0f, 0.0f,
+		//				 0.0f, 0.0f, 0.0f, 1.0f); ;// = QMatrix(1.0f);
+
+		//
+		////trans = 1.0f;
+		////trans.setRow(0, 1.0f);
+		//QMatrix4x4 rot(1.0f, 0.0f, 0.0f, 0.0f,
+		//	0.0f, 1.0f, 0.0f, 0.0f,
+		//	0.0f, 0.0f, 1.0f, 0.0f,
+		//	0.0f, 0.0f, 0.0f, 1.0f);;// = QMatrix(1.0f);
+		//QMatrix4x4 sca(1.0f, 0.0f, 0.0f, 0.0f,
+		//	0.0f, 1.0f, 0.0f, 0.0f,
+		//	0.0f, 0.0f, 1.0f, 0.0f,
+		//	0.0f, 0.0f, 0.0f, 1.0f);;// = QMatrix(1.0f);
+		//QMatrix4x4 matrix = trans;
+
+
+		// QVector3D translation(0.0f, 0.0f, 0.0f);
+		//trans.translate(translation);
+
+		//QQuaternion rotation(1.0f, 0.0f, 0.0f, 0.0f);
+		////rot = 
+		//QVector3D scale(1.0f, 1.0f, 1.0f);
+		//sca.scale(scale);
+		//QMatrix4x4::translate(trans, );
+		float trans[4][4] = {
+						1.0f, 0.0f, 0.0f, 0.0f,
 						 0.0f, 1.0f, 0.0f, 0.0f,
 						 0.0f, 0.0f, 1.0f, 0.0f,
-						 0.0f, 0.0f, 0.0f, 1.0f); ;// = QMatrix(1.0f);
-
-		
-		//trans = 1.0f;
-		//trans.setRow(0, 1.0f);
-		QMatrix4x4 rot(1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f);;// = QMatrix(1.0f);
-		QMatrix4x4 sca(1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f);;// = QMatrix(1.0f);
-		QMatrix4x4 matrix = trans;
-
-
-		 QVector3D translation(0.0f, 0.0f, 0.0f);
-		trans.translate(translation);
-
-		QQuaternion rotation(1.0f, 0.0f, 0.0f, 0.0f);
-		//rot = 
-		QVector3D scale(1.0f, 1.0f, 1.0f);
-		sca.scale(scale);
-		//QMatrix4x4::translate(trans, );
-
+						 0.0f, 0.0f, 0.0f, 1.0f
+		};
 		// Push the matrices to the vertex shader
-		glUniformMatrix4fv(glGetUniformLocation(shader->programID, "translation"), 1, GL_FALSE, &trans.constData()[0]);
-		glUniformMatrix4fv(glGetUniformLocation(shader->programID, "rotation"), 1, GL_FALSE, &rot.constData()[0]);
-		glUniformMatrix4fv(glGetUniformLocation(shader->programID, "scale"), 1, GL_FALSE, &sca.constData()[0]);
-		glUniformMatrix4fv(glGetUniformLocation(shader->programID, "model"), 1, GL_FALSE, &matrix.constData()[0]);
+		glUniformMatrix4fv(glGetUniformLocation(shader->programID, "translation"), 1, GL_FALSE, trans[0]);
+		glUniformMatrix4fv(glGetUniformLocation(shader->programID, "rotation"), 1, GL_FALSE, trans[0]);
+		glUniformMatrix4fv(glGetUniformLocation(shader->programID, "scale"), 1, GL_FALSE, trans[0]);
+		glUniformMatrix4fv(glGetUniformLocation(shader->programID, "model"), 1, GL_FALSE, trans[0]);
 		// Draw the actual mesh
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	}

@@ -34,7 +34,7 @@ namespace chen {
 	}
 	cebo::~cebo()
 	{
-		glDeleteBuffers(1, &eboID);
+		//glDeleteBuffers(1, &eboID);
 	}
 	void cebo::bind()
 	{

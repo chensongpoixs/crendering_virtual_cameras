@@ -1,127 +1,97 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>qml;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>qrc;rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Form Files">
-      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
-      <Extensions>ui</Extensions>
-    </Filter>
-    <Filter Include="Translation Files">
-      <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
-      <Extensions>ts</Extensions>
-    </Filter>
-    <Filter Include="shader">
-      <UniqueIdentifier>{3a4b3365-d5ee-4efe-b6de-33a19a8c4063}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <QtRcc Include="OpenGLHDR.qrc">
-      <Filter>Resource Files</Filter>
-    </QtRcc>
-    <QtUic Include="OpenGLHDR.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtMoc Include="OpenGLHDR.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <ClCompile Include="OpenGLHDR.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ccamera.cpp" />
+    <ClCompile Include="cebo.cpp" />
+    <ClCompile Include="cmesh.cpp" />
+    <ClCompile Include="cshader.cpp" />
+    <ClCompile Include="ctexture.cpp" />
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="cutil.cpp" />
+    <ClCompile Include="cvao.cpp" />
+    <ClCompile Include="cvbo.cpp" />
+    <ClCompile Include="OpenGLHDR.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="EBO.cpp">
+      <Filter>old</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>old</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>old</Filter>
+    </ClCompile>
+    <ClCompile Include="shaderClass.cpp">
+      <Filter>old</Filter>
+    </ClCompile>
+    <ClCompile Include="stb.cpp">
+      <Filter>old</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>old</Filter>
+    </ClCompile>
+    <ClCompile Include="VAO.cpp">
+      <Filter>old</Filter>
+    </ClCompile>
+    <ClCompile Include="VBO.cpp">
+      <Filter>old</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cutil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="cshader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ctexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cvbo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cmesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cvao.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cebo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ccamera.cpp">
-=======
-    <ClCompile Include="camera.cpp">
->>>>>>> 57f668359059e25a807a7659f9ca066108354637
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="cutil.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ccamera.h" />
+    <ClInclude Include="cebo.h" />
+    <ClInclude Include="cmesh.h" />
+    <ClInclude Include="cshader.h" />
+    <ClInclude Include="ctexture.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="cutil.h" />
+    <ClInclude Include="cvao.h" />
+    <ClInclude Include="cvbo.h" />
+    <ClInclude Include="QtEvent.h" />
+    <ClInclude Include="EBO.h">
+      <Filter>old</Filter>
     </ClInclude>
-    <ClInclude Include="QtEvent.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Mesh.h">
+      <Filter>old</Filter>
     </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="cshader.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Model.h">
+      <Filter>old</Filter>
     </ClInclude>
-    <ClInclude Include="ctexture.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="shaderClass.h">
+      <Filter>old</Filter>
     </ClInclude>
-    <ClInclude Include="cvbo.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Texture.h">
+      <Filter>old</Filter>
     </ClInclude>
-    <ClInclude Include="cmesh.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="VAO.h">
+      <Filter>old</Filter>
     </ClInclude>
-    <ClInclude Include="cvao.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cebo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ccamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-=======
-    <ClInclude Include="camera.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="VBO.h">
+      <Filter>old</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader\fragmentShader.glsl">
-      <Filter>shader</Filter>
-    </None>
-    <None Include="shader\hdr_shader.frag">
-      <Filter>shader</Filter>
-    </None>
-    <None Include="shader\hdr_shader.vert">
-      <Filter>shader</Filter>
-    </None>
-    <None Include="shader\vertexShader.glsl">
-      <Filter>shader</Filter>
-    </None>
-    <None Include="ReShade.fxh">
-      <Filter>shader</Filter>
-    </None>
->>>>>>> 57f668359059e25a807a7659f9ca066108354637
+    <QtMoc Include="OpenGLHDR.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="OpenGLHDR.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="OpenGLHDR.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReShade.fxh" />
+    <None Include="shader\fragmentShader.glsl" />
+    <None Include="shader\hdr_shader.frag" />
+    <None Include="shader\hdr_shader.vert" />
+    <None Include="shader\vertexShader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="old">
+      <UniqueIdentifier>{5a5b3b6e-f213-422a-8a0c-29a9ab02de7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="old\NewFilter1">
+      <UniqueIdentifier>{4efae142-1374-4a26-b620-1cc55cfbeb77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

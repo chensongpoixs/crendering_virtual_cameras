@@ -34,7 +34,7 @@ namespace chen {
 
 	cvao::~cvao()
 	{
-		glDeleteVertexArrays(1, &vaoID);
+		//glDeleteVertexArrays(1, &vaoID);
 	}
 
 	void cvao::LinkAttrib(cvbo& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset)

@@ -20,15 +20,7 @@ char* load_file_context(const char* url)
 	}
 	return fileContext;
 }
-void check_error()
-{
-	GLenum err(glGetError());
-	while (err != GL_NO_ERROR)
-	{
-		printf("[OpenGL error = %u]\n", err);
-		err = glGetError();
-	}
-}
+
 GLuint   CreateGpuProgram(const char* vs, const char* fs, const char* geometryFile)
 {
 	/*GLuint vsShader = CompileShader(GL_VERTEX_SHADER, vs);

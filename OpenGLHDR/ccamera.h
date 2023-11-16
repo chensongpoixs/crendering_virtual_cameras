@@ -39,7 +39,8 @@ purpose:		camera
 #include <Qvector3D>
 #include <Qvector4D>
 #include <QMatrix4x4>
-#include <QMatrix>
+//#include <QMatrix>
+#include <QInputEvent>
 #include "cvbo.h"
 //#include "ctexture.h"
 //#define MAX_TEXTURE_SIZE 32
@@ -57,7 +58,8 @@ namespace chen {
 		// Exports the camera matrix to a shader
 		void Matrix(cshader* shader, const char* uniform);
 		// Handles camera inputs
-		//void Inputs(GLFWwindow* window);
+		 void Inputs(QKeyEvent* event);
+		 void Inputs(QMouseEvent* event);
 	public:
 		// Stores the main vectors of the camera
 		QVector3D Position;

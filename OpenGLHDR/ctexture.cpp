@@ -38,16 +38,25 @@ namespace chen {
 		// Reads the image from a file and stores it in bytes
 		//unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
 		QImage img = QImage(image);
+		/*std::string new_image = std::string(image) + ".bgra";
+		FILE* out_file = fopen(new_image.c_str(), "wb+");
+		if (out_file)
+		{
+			fwrite(img.bits(), img.width() * img.width() * 4, 1, out_file);
+			::fflush(out_file);
+			::fclose(out_file);
+			out_file = NULL;
+		}*/
 		// Generates an OpenGL texture object
 		glGenTextures(1, &texID);
 		// Assigns the texture to a Texture Unit
-		glActiveTexture(GL_TEXTURE0 + slot);
+		glActiveTexture(/*GL_TEXTURE0 +*/ slot);
 		unit = slot;
 		glBindTexture(GL_TEXTURE_2D, texID);
 
 		// Configures the type of algorithm that is used to make the image smaller or bigger
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR/*GL_NEAREST_MIPMAP_LINEAR*/);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR/*GL_NEAREST*/);
 
 		// Configures the way the texture repeats (if it does at all)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -56,22 +65,67 @@ namespace chen {
 		// Extra lines in case you choose to use GL_CLAMP_TO_BORDER
 		// float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
 		// glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
-		glTexImage2D
-		(
-			GL_TEXTURE_2D,
-			0,
-			GL_RGBA,
-			img.width(),
-			img.height(),
-			0,
-			GL_BGRA,
-			GL_UNSIGNED_BYTE,
-			img.bits()
-		);
-		
+		//glTexImage2D
+		//(
+		//	GL_TEXTURE_2D,
+		//	0,
+		//	GL_RGBA,
+		//	img.width(),
+		//	img.height(),
+		//	0,
+		//	GL_BGRA,
+		//	GL_UNSIGNED_BYTE,
+		//	img.bits()
+		//);
+		if (type == "diffuse")
+		{
+			glTexImage2D
+			(
+				GL_TEXTURE_2D,
+				0,
+				GL_SRGB_ALPHA,
+				 img.width(),
+		 	img.height(),
+				0,
+				GL_BGRA,
+				GL_UNSIGNED_BYTE,
+				img.bits()
+			);
+		}
+		else if (type == "normal")
+		{
+			glTexImage2D
+			(
+				GL_TEXTURE_2D,
+				0,
+				GL_RGB,
+				img.width(),
+				img.height(),
+				0,
+				GL_BGRA,
+				GL_UNSIGNED_BYTE,
+				img.bits()
+			);
+		}
+		else if (type == "displacement")
+		{
+			glTexImage2D
+			(
+				GL_TEXTURE_2D,
+				0,
+				GL_RED,
+				img.width(),
+				img.height(),
+				0,
+				GL_BGRA,
+				GL_UNSIGNED_BYTE,
+				img.bits()
+			);
+		}
 		// Generates MipMaps
 		glGenerateMipmap(GL_TEXTURE_2D);
-
+	 //	char* pixels = new char[img.width() * img.height() * 4];
+ 	// glReadPixels(0, 0, img.width(), img.height(), GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 		 
 
 		// Unbinds the OpenGL Texture object so that it can't accidentally be modified
@@ -82,18 +136,18 @@ namespace chen {
 	{
 		glDeleteTextures(1, &texID);
 	}
-	void ctexture::texunit(cshader* shader, const char* uniform, GLuint unit)
+	void ctexture::texunit(cshader* shader, const char* uniform, GLuint ttunit)
 	{
 		// Gets the location of the uniform
 		GLuint texUni = glGetUniformLocation(shader->programID, uniform);
 		// Shader needs to be activated before changing the value of a uniform
 		shader->activate();
 		// Sets the value of the uniform
-		glUniform1i(texUni, unit);
+		glUniform1i(texUni, ttunit);
 	}
 	void ctexture::bind()
 	{
-		glActiveTexture(GL_TEXTURE0 + unit);
+		glActiveTexture(/*GL_TEXTURE0 +*/ unit);
 		glBindTexture(GL_TEXTURE_2D, texID);
 	}
 	void ctexture::unbind()
