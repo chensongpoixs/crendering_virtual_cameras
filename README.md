@@ -18,6 +18,8 @@ OpenGL基础操作 渲染虚拟相机
 
 [7、 解析3D Object 模型 ](OpenGLParse3DObjectModel)
 
+[8、HDR](OpenGLHDR)
+
 
 # 二、OpenGL概念
 
