@@ -56,3 +56,6 @@ src/QtRendererVideo/x64
 /QtRendererVideo/QtRendererVideo.vcxproj.user
 /OpenGLParse3DObjectModel/x64
 /OpenGLHDR/x64
+/OpenGLHDR/*.user
+/OpenGLParse3DObjectModel/OpenGLParse3DObjectModel.vcxproj.user
+/OpenGLSceneRoaming/OpenGLSceneRoaming.vcxproj.user
