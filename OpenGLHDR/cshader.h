@@ -23,8 +23,8 @@ purpose:		camera
 ************************************************************************************************/
 
 
-#ifndef _C_SHADER_H_
-#define _C_SHADER_H_
+#ifndef _C_ffSHADER_H_
+#define _C_ffSHADER_H_
 #include <Windows.h>
 #include <stdint.h>
 #include <GL/eglew.h>

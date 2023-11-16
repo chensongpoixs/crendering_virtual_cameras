@@ -157,7 +157,7 @@ bool OpenGLParse3DObjectModel::event(QEvent* event)
 bool OpenGLParse3DObjectModel::initializeGL()
 {
 	mesh =  chen::LoadObjModel("assets/teapot.obj", true/*EBO 开启就不需要内存空间*/);
-	shader = new chen::cshader("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
+	shader = new chen::cshader1("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
 	//program = chen::CreateGpuProgram("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
 
 	// 使用着色器程序

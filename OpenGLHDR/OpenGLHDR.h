@@ -156,7 +156,7 @@ private:
 
     // Controls the gamma function
 //<<<<<<< HEAD
-    float gamma = 4.2f;
+    float gamma = 7.2f;
 
     chen::cmesh* plane;
     int width = 800;

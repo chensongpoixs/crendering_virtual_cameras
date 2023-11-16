@@ -33,11 +33,11 @@ purpose:		camera
 #define MAX_TEXTURE_SIZE 32
 namespace chen {
 
-	class cshader
+	class cshader1
 	{
 	public:
-		explicit cshader(const char * vsUrl, const char * fsUrl);
-		~cshader();
+		explicit cshader1(const char * vsUrl, const char * fsUrl);
+		~cshader1();
 
 		void SetTexture2D(const char * locationName, ctexture * texture);
 	public:

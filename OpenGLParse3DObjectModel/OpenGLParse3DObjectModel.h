@@ -63,7 +63,7 @@ private:
     GLuint VBO, VAO, EBO;
 
      
-    chen::cshader* shader = NULL;
+    chen::cshader1* shader = NULL;
     //GLuint program;
     chen::ctexture* tex1;
     chen::ctexture *tex2;

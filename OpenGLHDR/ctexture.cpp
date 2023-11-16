@@ -38,6 +38,7 @@ namespace chen {
 		// Reads the image from a file and stores it in bytes
 		//unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
 		QImage img = QImage(image);
+		int widthImg = img.width(), heightImg = img.height(), numColCh = img.colorCount();
 		/*std::string new_image = std::string(image) + ".bgra";
 		FILE* out_file = fopen(new_image.c_str(), "wb+");
 		if (out_file)

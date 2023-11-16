@@ -249,12 +249,19 @@ bool OpenGLHDR::initializeGL()
 	  framebufferprogram_ptr = new Shader("shader/framebuffer.vert", "shader/framebuffer.frag");
 
 	// Take care of all the light related things
-	glm::vec4 lightColor = glm::vec4(100.0f, 100.0f, 100.0f, 1.0f);
-	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
+	//glm::vec4 lightColor = glm::vec4(100.0f, 100.0f, 100.0f, 1.0f);
+	//glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
+
+
+
+
+	QVector4D lightColor(100.0f, 100.0f, 100.0f, 1.0f);
+	QVector3D lightPos(0.5f, 0.5f, 0.5f);
+
 
 	shader_ptr->Activate();
-	glUniform4f(glGetUniformLocation(shader_ptr->ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-	glUniform3f(glGetUniformLocation(shader_ptr->ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	glUniform4f(glGetUniformLocation(shader_ptr->ID, "lightColor"), lightColor.x(), lightColor.y(), lightColor.z(), lightColor.w());
+	glUniform3f(glGetUniformLocation(shader_ptr->ID, "lightPos"), lightPos.x(), lightPos.y(), lightPos.z());
 	framebufferprogram_ptr->Activate();
 	glUniform1i(glGetUniformLocation(framebufferprogram_ptr->ID, "screenTexture"), 0);
 	glUniform1f(glGetUniformLocation(framebufferprogram_ptr->ID, "gamma"), gamma);
@@ -276,7 +283,8 @@ bool OpenGLHDR::initializeGL()
 
 
 	// Creates camera object
-	 camera_ptr = new Camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+	QVector3D tempvec3d(0.0f, 0.0f, 2.0f);
+	 camera_ptr = new Camera(width, height, tempvec3d/*glm::vec3(0.0f, 0.0f, 2.0f)*/);
 	 /*
 	* I'm doing this relative path thing in order to centralize all the resources into one folder and not
 	* duplicate them between tutorial folders. You can just copy paste the resources from the 'Resources'

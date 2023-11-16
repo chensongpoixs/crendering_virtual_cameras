@@ -22,13 +22,14 @@ purpose:		camera
 沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
 ************************************************************************************************/
+//#include "cshader.h"
 #include "cshader.h"
 #include "cutil.h"
 namespace chen {
 
 
 
-	cshader::cshader(const char* vsUrl, const char* fsUrl)
+	cshader1::cshader1(const char* vsUrl, const char* fsUrl)
 	{
 
 		program = chen::CreateGpuProgram(vsUrl, fsUrl);
@@ -52,12 +53,12 @@ namespace chen {
 
 	
 
-	cshader::~cshader()
+	cshader1::~cshader1()
 	{
 		glDeleteProgram(program);
 	}
 
-	void cshader::SetTexture2D(const char* locationName, ctexture* texture)
+	void cshader1::SetTexture2D(const char* locationName, ctexture* texture)
 	{
 		int unit = -1;
 
@@ -89,7 +90,7 @@ namespace chen {
 		glUniform1i(location, unit);
 	}
 
-	void cshader::Apply()
+	void cshader1::Apply()
 	{
 		memset(textureUnit, 0, sizeof(textureUnit));
 		glUseProgram(program);
