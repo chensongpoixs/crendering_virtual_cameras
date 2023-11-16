@@ -6,6 +6,7 @@
 #include <gl/glew.h>
 #include<vector>
 #include <QVector3D>
+#include <QVector2D>
 // Structure to standardize the vertices used in the meshes
 struct Vertex
 {
