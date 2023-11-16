@@ -1,13 +1,18 @@
 #version 330 core
 
+//out vec4 FragColor;
+//in vec2 texCoords;
+
 out vec4 FragColor;
 in vec2 texCoords;
+
 
 uniform sampler2D screenTexture;
 uniform float gamma;
 
 void main()
 {
+	//texCoords.y *=-1;
     vec3 fragment = texture(screenTexture, texCoords).rgb;
 
     float exposure = 0.1f;

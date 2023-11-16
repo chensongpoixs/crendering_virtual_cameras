@@ -85,6 +85,21 @@
     <None Include="shader\hdr_shader.frag" />
     <None Include="shader\hdr_shader.vert" />
     <None Include="shader\vertexShader.glsl" />
+    <None Include="shader\default.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="shader\default.geom">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="shader\default.vert">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="shader\framebuffer.frag">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="shader\framebuffer.vert">
+      <Filter>shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="old">
@@ -92,6 +107,9 @@
     </Filter>
     <Filter Include="old\NewFilter1">
       <UniqueIdentifier>{4efae142-1374-4a26-b620-1cc55cfbeb77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{35c05ba0-29fc-46e5-816c-72027322268e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

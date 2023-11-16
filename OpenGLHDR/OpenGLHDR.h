@@ -17,6 +17,10 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "Mesh.h"
+
+#define  HDR_VEC (1)
+
+
 class OpenGLHDR : public QWidget
 {
     Q_OBJECT
@@ -156,10 +160,10 @@ private:
 
     // Controls the gamma function
 //<<<<<<< HEAD
-    float gamma = 7.2f;
+    float gamma = 3.2f;
 
     chen::cmesh* plane;
-    int width = 800;
+    int width = 1600;
     int height = 800;
 //=======
   //  float gamma = 5.2f;

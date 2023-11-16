@@ -35,7 +35,7 @@ namespace chen {
 
 	cvbo::~cvbo()
 	{
-		//glDeleteBuffers(1, &vboID);
+		glDeleteBuffers(1, &vboID);
 	}
 
 	void cvbo::bind()

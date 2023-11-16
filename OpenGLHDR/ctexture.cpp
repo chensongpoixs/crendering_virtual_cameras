@@ -38,16 +38,8 @@ namespace chen {
 		// Reads the image from a file and stores it in bytes
 		//unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
 		QImage img = QImage(image);
-		int widthImg = img.width(), heightImg = img.height(), numColCh = img.colorCount();
-		/*std::string new_image = std::string(image) + ".bgra";
-		FILE* out_file = fopen(new_image.c_str(), "wb+");
-		if (out_file)
-		{
-			fwrite(img.bits(), img.width() * img.width() * 4, 1, out_file);
-			::fflush(out_file);
-			::fclose(out_file);
-			out_file = NULL;
-		}*/
+		int widthImg = img.width(), heightImg = img.height(), numColCh = 4;
+		unsigned char* bytes = img.bits();
 		// Generates an OpenGL texture object
 		glGenTextures(1, &texID);
 		// Assigns the texture to a Texture Unit
@@ -78,51 +70,79 @@ namespace chen {
 		//	GL_UNSIGNED_BYTE,
 		//	img.bits()
 		//);
-		if (type == "diffuse")
-		{
-			glTexImage2D
-			(
-				GL_TEXTURE_2D,
-				0,
-				GL_SRGB_ALPHA,
-				 img.width(),
-		 	img.height(),
-				0,
-				GL_BGRA,
-				GL_UNSIGNED_BYTE,
-				img.bits()
-			);
-		}
-		else if (type == "normal")
-		{
+		// Extra lines in case you choose to use GL_CLAMP_TO_BORDER
+	// float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+	// glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
+
+	// Check what type of color channels the texture has and load it accordingly
+		if (type == "normal") // prevents SRGB from deforming normals
 			glTexImage2D
 			(
 				GL_TEXTURE_2D,
 				0,
 				GL_RGB,
-				img.width(),
-				img.height(),
+				widthImg,
+				heightImg,
 				0,
-				GL_BGRA,
+				GL_RGBA,
 				GL_UNSIGNED_BYTE,
-				img.bits()
+				bytes
 			);
-		}
 		else if (type == "displacement")
-		{
 			glTexImage2D
 			(
 				GL_TEXTURE_2D,
 				0,
 				GL_RED,
-				img.width(),
-				img.height(),
+				widthImg,
+				heightImg,
 				0,
-				GL_BGRA,
+				GL_RGBA,
 				GL_UNSIGNED_BYTE,
-				img.bits()
+				bytes
 			);
-		}
+		else if (numColCh == 4)
+			glTexImage2D
+			(
+				GL_TEXTURE_2D,
+				0,
+				GL_SRGB_ALPHA,
+				widthImg,
+				heightImg,
+				0,
+				GL_RGBA,
+				GL_UNSIGNED_BYTE,
+				bytes
+			);
+		else if (numColCh == 3)
+			glTexImage2D
+			(
+				GL_TEXTURE_2D,
+				0,
+				GL_SRGB,
+				widthImg,
+				heightImg,
+				0,
+				GL_RGB,
+				GL_UNSIGNED_BYTE,
+				bytes
+			);
+		else if (numColCh == 1)
+			glTexImage2D
+			(
+				GL_TEXTURE_2D,
+				0,
+				GL_SRGB,
+				widthImg,
+				heightImg,
+				0,
+				GL_RED,
+				GL_UNSIGNED_BYTE,
+				bytes
+			);
+		else
+			throw std::invalid_argument("Automatic Texture type recognition failed");
+
 		// Generates MipMaps
 		glGenerateMipmap(GL_TEXTURE_2D);
 	 //	char* pixels = new char[img.width() * img.height() * 4];

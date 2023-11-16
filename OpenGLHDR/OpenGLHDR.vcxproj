@@ -143,7 +143,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReShade.fxh" />
+    <None Include="shader\default.frag" />
+    <None Include="shader\default.geom" />
+    <None Include="shader\default.vert" />
     <None Include="shader\fragmentShader.glsl" />
+    <None Include="shader\framebuffer.frag" />
+    <None Include="shader\framebuffer.vert" />
     <None Include="shader\hdr_shader.frag" />
     <None Include="shader\hdr_shader.vert" />
     <None Include="shader\vertexShader.glsl" />

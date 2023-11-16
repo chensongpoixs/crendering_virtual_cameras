@@ -25,13 +25,15 @@ in DATA
 // Default main function
 void main()
 {
+   // deltaUV1.y *=-1;
     // Edges of the triangle
     vec3 edge0 = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
     vec3 edge1 = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
     // Lengths of UV differences
     vec2 deltaUV0 = data_in[1].texCoord - data_in[0].texCoord;
     vec2 deltaUV1 = data_in[2].texCoord - data_in[0].texCoord;
-
+    //deltaUV1.y *= -1;
+    //deltaUV0.y *= -1;
     // one over the determinant
     float invDet = 1.0f / (deltaUV0.x * deltaUV1.y - deltaUV1.x * deltaUV0.y);
 

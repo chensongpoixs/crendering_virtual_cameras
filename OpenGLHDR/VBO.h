@@ -5,14 +5,14 @@
 //#include<glad/glad.h>
 #include <gl/glew.h>
 #include<vector>
-
+#include <QVector3D>
 // Structure to standardize the vertices used in the meshes
 struct Vertex
 {
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec3 color;
-	glm::vec2 texUV;
+	QVector3D position;
+	QVector3D normal;
+	QVector3D color;
+	QVector2D texUV;
 };
 
 

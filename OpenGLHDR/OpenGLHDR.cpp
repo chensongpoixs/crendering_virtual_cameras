@@ -10,6 +10,7 @@
 #include "OpenGLHDR.h"
 #include "ctexture.h"
 #include "cvbo.h"
+#include <QVector2D>
 #include "cmesh.h"
 OpenGLHDR::OpenGLHDR(QWidget *parent)
     : QWidget(parent, Qt::MSWindowsOwnDC)
@@ -241,6 +242,7 @@ void OpenGLHDR::mouseMoveEvent(QMouseEvent* event)
 }
 bool OpenGLHDR::initializeGL()
 {
+#if HDR_VEC
 
 	//<<<<<<< HEAD
 
@@ -382,16 +384,21 @@ bool OpenGLHDR::initializeGL()
 
 	 std::vector<Texture> textures =
 	 {
-		 Texture("images/diffuse.png", "diffuse", GL_TEXTURE0)
+		 Texture("images/video.png", "diffuse", GL_TEXTURE0)
 	 };
 	 // Vertices for plane with texture
-	 std::vector<Vertex> verticesss =
-	 {
-		 Vertex{glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
-		 Vertex{glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
-		 Vertex{glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
-		 Vertex{glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)}
-	 };
+	  std::vector<Vertex> verticesss =
+	 { 
+		 Vertex{QVector3D(-1.0f, -1.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector2D(0.0f, 0.0f)},
+		 Vertex{QVector3D(-1.0f, 1.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector2D(0.0f, 1.0f)},
+		 Vertex{QVector3D(1.0f, 1.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector2D(1.0f, 1.0f)},
+		 Vertex{QVector3D(1.0f, -1.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector2D(1.0f, 0.0f)}
+	 
+		// Vertex{glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
+		// Vertex{glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
+		// Vertex{glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
+		// Vertex{glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)}
+	 }; 
 	 // Plane with the texture
 	 mesh_ptr = new  Mesh(verticesss, indices, textures);
 	 // Normal map for the plane
@@ -401,6 +408,7 @@ bool OpenGLHDR::initializeGL()
 	 check_error();
 
 	return true;
+#else
 
 	shaderProgram = new chen::cshader("shader/default.vert", "shader/default.frag", "shader/default.geom");
 	check_error();
@@ -537,7 +545,7 @@ bool OpenGLHDR::initializeGL()
 
 	check_error();
 	// Error checking framebuffer
-	  fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	auto  fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer error: " << fboStatus << std::endl;
 
@@ -570,7 +578,7 @@ bool OpenGLHDR::initializeGL()
 	//////
 	std::vector<chen::ctexture> texturess =
 	{
-		chen::ctexture("images/diffuse.png", "diffuse", GL_TEXTURE0)
+		chen::ctexture("images/video.png", "diffuse", GL_TEXTURE0)
 	};
 
 
@@ -581,7 +589,7 @@ bool OpenGLHDR::initializeGL()
 	//displacementMap = new chen::ctexture("images/displacement.png", "displacement", GL_TEXTURE2);
 	check_error();
 
-
+#endif 
 
 	//创建VAO
 	//glGenVertexArrays(1, &VAO);
@@ -737,6 +745,7 @@ bool OpenGLHDR::initializeGL()
 void OpenGLHDR::Renderer()
 {
 
+#if HDR_VEC
 
 	// Bind the custom framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -780,6 +789,7 @@ void OpenGLHDR::Renderer()
 
 	SwapBuffers(dc);
 	return;
+#else 
 
 
 
@@ -839,4 +849,5 @@ void OpenGLHDR::Renderer()
 	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 	check_error();
 	SwapBuffers(dc);
+#endif //
 }
