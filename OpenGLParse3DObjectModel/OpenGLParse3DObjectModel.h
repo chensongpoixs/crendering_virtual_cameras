@@ -8,6 +8,7 @@
 #include "cutil.h"
 #include "camera.h"
 #include "cshader.h"
+#include "cmodel.h"
 #include "ctexture.h"
 class OpenGLParse3DObjectModel : public QWidget
 {
@@ -63,7 +64,7 @@ private:
     GLuint VBO, VAO, EBO;
 
      
-    chen::cshader1* shader = NULL;
+    
     //GLuint program;
     chen::ctexture* tex1;
     chen::ctexture *tex2;
@@ -95,4 +96,12 @@ private:
 
 
     struct chen::Mesh* mesh = NULL;
+
+    chen::cshader1* shader = NULL;
+    chen::cmodel* model = NULL;
+
+
+    //绘制两个图形
+    chen::cshader1* shader2 = NULL;
+    chen::cmodel* model2 = NULL;
 };

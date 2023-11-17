@@ -103,6 +103,7 @@
     <QtUic Include="OpenGLParse3DObjectModel.ui" />
     <QtMoc Include="OpenGLParse3DObjectModel.h" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="cmodel.cpp" />
     <ClCompile Include="cshader.cpp" />
     <ClCompile Include="ctexture.cpp" />
     <ClCompile Include="cutil.cpp" />
@@ -111,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="cmodel.h" />
     <ClInclude Include="cshader.h" />
     <ClInclude Include="ctexture.h" />
     <ClInclude Include="cutil.h" />

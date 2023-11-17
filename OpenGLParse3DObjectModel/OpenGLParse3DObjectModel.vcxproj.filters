@@ -55,6 +55,9 @@
     <ClCompile Include="ctexture.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="cmodel.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -70,6 +73,9 @@
       <Filter>util</Filter>
     </ClInclude>
     <ClInclude Include="ctexture.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cmodel.h">
       <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
