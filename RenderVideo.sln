@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLParse3DObjectModel", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLHDR", "OpenGLHDR\OpenGLHDR.vcxproj", "{54EBF73D-AC40-4215-B110-09E5613678B3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLFfmpeg", "OpenGLFfmpeg\OpenGLFfmpeg.vcxproj", "{6E6F593B-CF3C-4932-88BA-794D50617B7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -93,6 +95,12 @@ Global
 		{54EBF73D-AC40-4215-B110-09E5613678B3}.Release|x64.ActiveCfg = Release|x64
 		{54EBF73D-AC40-4215-B110-09E5613678B3}.Release|x64.Build.0 = Release|x64
 		{54EBF73D-AC40-4215-B110-09E5613678B3}.Release|x86.ActiveCfg = Release|x64
+		{6E6F593B-CF3C-4932-88BA-794D50617B7D}.Debug|x64.ActiveCfg = Debug|x64
+		{6E6F593B-CF3C-4932-88BA-794D50617B7D}.Debug|x64.Build.0 = Debug|x64
+		{6E6F593B-CF3C-4932-88BA-794D50617B7D}.Debug|x86.ActiveCfg = Debug|x64
+		{6E6F593B-CF3C-4932-88BA-794D50617B7D}.Release|x64.ActiveCfg = Release|x64
+		{6E6F593B-CF3C-4932-88BA-794D50617B7D}.Release|x64.Build.0 = Release|x64
+		{6E6F593B-CF3C-4932-88BA-794D50617B7D}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
