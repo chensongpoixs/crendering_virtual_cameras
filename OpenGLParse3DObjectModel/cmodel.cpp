@@ -27,7 +27,7 @@ purpose:		camera
 namespace chen {
 	cmodel::cmodel(const char * url)
 	{
-		mesh = chen::LoadObjModel(url, false/*true*//*EBO 开启就不需要内存空间*/);
+		mesh = chen::LoadObjModel(url, true/*true*//*EBO 开启就不需要内存空间*/);
 		VBO = chen::CreateGLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, mesh->vertexCount * sizeof(struct chen::Vertex), mesh->vertices);
 		EBO = chen::CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, mesh->indexCount * sizeof(uint32_t), mesh->indices);
 		position = QVector3D(0.0f, 0.0f, 0.0f);

@@ -10,6 +10,12 @@
 #include "cshader.h"
 #include "cmodel.h"
 #include "ctexture.h"
+
+
+//是否优化过后的代码
+#define  MODEL_APP (1)
+
+
 class OpenGLParse3DObjectModel : public QWidget
 {
     Q_OBJECT
@@ -65,16 +71,16 @@ private:
 
      
     
-    //GLuint program;
+    GLuint program;
     chen::ctexture* tex1;
     chen::ctexture *tex2;
 
-    //GLint smp1, smp2;
+    GLint smp1, smp2;
 
 
-   // GLuint modelLocation;
-  //  GLuint viewLocation;
-  //  GLuint projLocation;
+    GLuint modelLocation;
+    GLuint viewLocation;
+    GLuint projLocation;
 
 
     chen::Camera camera;
