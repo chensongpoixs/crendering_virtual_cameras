@@ -109,6 +109,7 @@
     <ClCompile Include="cshader.cpp" />
     <ClCompile Include="ctexture.cpp" />
     <ClCompile Include="cutil.cpp" />
+    <ClCompile Include="cvideo_capture.cpp" />
     <ClCompile Include="OpenGLFfmpeg.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -118,6 +119,7 @@
     <ClInclude Include="cshader.h" />
     <ClInclude Include="ctexture.h" />
     <ClInclude Include="cutil.h" />
+    <ClInclude Include="cvideo_capture.h" />
     <ClInclude Include="QtEvent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
