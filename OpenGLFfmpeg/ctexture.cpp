@@ -32,6 +32,22 @@ namespace chen {
 		this->format = format;
 		this->texID = CreateGLTexture(GL_TEXTURE_2D, width, height, internalFormat, format, data);
 	}
+
+
+	void ctexture::update_texture2d(int width, int hieght, int linesize, const void* data)
+	{
+		// 绑定id
+		glBindTexture(GL_TEXTURE_2D, texID);
+		// 设置openGL读取一行数据的大小
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, linesize);
+		//数据的拷贝  替换图形中数据
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data);
+
+		//解绑ID
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+	}
+
 	ctexture::~ctexture()
 	{
 		glDeleteTextures(1, &texID);

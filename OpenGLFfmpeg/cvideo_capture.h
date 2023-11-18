@@ -89,7 +89,7 @@ namespace chen {
 		virtual ~cvideo_capture();
 
 	public:
-
+		//PixelFormatType get_video_format_type() const { return formatType; }
 	public:
 		void destroy();
 		/**
@@ -124,7 +124,7 @@ namespace chen {
 		*/
 		bool seek(double percentage);
 	public:
-	private:
+	//private:
 		bool is_opened;
 		PixelFormatType formatType ;
 		int width;
