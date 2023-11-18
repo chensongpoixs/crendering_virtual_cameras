@@ -163,6 +163,7 @@ bool OpenGLFfmpeg::initializeGL()
 {
 	video_capture_ptr = new chen::cvideo_capture();
 	const char* media_url = "rtmp://ns8.indexforce.com/home/mystream";
+	//const char* media_url = "assets/we.mp4";
 	if (!video_capture_ptr->open(media_url, chen::PIX_FMT_YUV420P))
 	{
 		printf("open video url  %s failed !!!\n ", media_url);
@@ -185,14 +186,18 @@ bool OpenGLFfmpeg::initializeGL()
 	}
 	
 
-	//开启深度测试
+	////开启深度测试
+	//glEnable(GL_DEPTH_TEST);
+	////启用面剔除
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK); // GL_FRONT
+
+	//glPolygonMode(GL_FRONT, GL_FILL);
 	glEnable(GL_DEPTH_TEST);
 	//启用面剔除
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK); // GL_FRONT
-
+	glCullFace(GL_BACK);
 	glPolygonMode(GL_FRONT, GL_FILL);
-
 	//assert(!glGetError());
 	return true;
 }
@@ -280,7 +285,7 @@ void OpenGLFfmpeg::Renderer()
 	//, float aspectRatio, float nearPlane, float farPlane
 	projMat.perspective(45, width() / (float)height(), 0.1f, 100);
 
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -298,7 +303,7 @@ retry:
 		video_capture_ptr->seek(0);
 		goto retry;
 	}
-	printf("[pts = %u]\n", frame->pts);
+	//printf("[pts = %u]\n", frame->pts);
 	chen::cmodel* model = isVR360 ? spheremodel : quadmodel;
 	//图形矩阵
 	const float* _videmat = isVR360 ? camera.GetViewMat().constData() : QMatrix4x4().constData();
@@ -313,7 +318,6 @@ retry:
 
 		model->apply_shader(shader);
 		model->set_texture("smp1", tex1);
-
 		model->set_texture("smp2", tex2);
 		model->set_texture("smp3", tex3);
 		// 设置角度

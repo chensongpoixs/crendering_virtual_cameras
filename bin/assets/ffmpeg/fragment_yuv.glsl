@@ -10,9 +10,9 @@ uniform sampler2D smp3;
 
 
 // BT.601 色彩空间
-const vec3 offset = vec3(-0.062745101817, -0.501960814, -0.5019608014);
-const vec3 Rcoeff = vec3(1.1644, 0.000, 1.596);
-const vec3 Gcoeff = vec3(1.1644, -0.3918, -0.813);
+const vec3 offset = vec3(-0.0627451017, -0.501960814, -0.501960814);
+const vec3 Rcoeff = vec3(1.1644, 0.000, 1.596);						
+const vec3 Gcoeff = vec3(1.1644, -0.3918, -0.813);					
 const vec3 Bcoeff = vec3(1.1644, 2.0172, 0.000);
 
 
