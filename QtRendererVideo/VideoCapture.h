@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 extern "C"
 {
 #include <libavutil/frame.h>
@@ -41,35 +41,35 @@ public:
 	~VideoCapture();
 
 	/* 
-	 * @param url ÎÄ¼şÂ·¾¶
-	 * @param fmt Êä³öÏñËØ¸ñÊ½
-	 * @return ³É¹¦·µ»Øtrue Ê§°Ü·µ»Øfalse
+	 * @param url æ–‡ä»¶è·¯å¾„
+	 * @param fmt è¾“å‡ºåƒç´ æ ¼å¼
+	 * @return æˆåŠŸè¿”å›true å¤±è´¥è¿”å›false
 	 */
 	bool Open(const char *url, PixelFormatType fmt = PIX_FMT_AUTO);
 
 	/*
-	 * ¹Ø±Õ²¢ÊÍ·Å×ÊÔ´
+	 * å…³é—­å¹¶é‡Šæ”¾èµ„æº
 	 */
 	void Close();
 
 	/*
-	 * ¶ÁÈ¡Ò»Ö¡ÊÓÆµÊı¾İ
-	 * @param outFrame Êä³öÖ¡Êı¾İ, Ô­Ê¼ÏñËØ¸ñÊ½
-	 * @return -1 ´íÎó£¬-2Ã»ÓĞ´ò¿ª£¬ 0£¬»ñÈ¡µ½½áÎ²£¬1»ñÈ¡³É¹¦
+	 * è¯»å–ä¸€å¸§è§†é¢‘æ•°æ®
+	 * @param outFrame è¾“å‡ºå¸§æ•°æ®, åŸå§‹åƒç´ æ ¼å¼
+	 * @return -1 é”™è¯¯ï¼Œ-2æ²¡æœ‰æ‰“å¼€ï¼Œ 0ï¼Œè·å–åˆ°ç»“å°¾ï¼Œ1è·å–æˆåŠŸ
 	 */
 	int GrabFrame(AVFrame* &outFrame);
 
 	/*
-	 * ¶ÁÈ¡Ò»Ö¡ÊÓÆµÊı¾İ²¢×ª»»µ½Ä¿±êÏñËØ¸ñÊ½
-	 * @param outFrame Êä³öÖ¡Êı¾İ£¬Ä¿±êÏñËØ¸ñÊ½£¬openº¯ÊıÉèÖÃ
-	 * @return -1 ´íÎó -2Ã»ÓĞ´ò¿ª£¬ 0£¬»ñÈ¡µ½½áÎ²£¬1»ñÈ¡³É¹¦
+	 * è¯»å–ä¸€å¸§è§†é¢‘æ•°æ®å¹¶è½¬æ¢åˆ°ç›®æ ‡åƒç´ æ ¼å¼
+	 * @param outFrame è¾“å‡ºå¸§æ•°æ®ï¼Œç›®æ ‡åƒç´ æ ¼å¼ï¼Œopenå‡½æ•°è®¾ç½®
+	 * @return -1 é”™è¯¯ -2æ²¡æœ‰æ‰“å¼€ï¼Œ 0ï¼Œè·å–åˆ°ç»“å°¾ï¼Œ1è·å–æˆåŠŸ
 	 */
 	int Retrieve(AVFrame* &outFrame);
 
 	/*
-	 * Seekµ½Ä¿±êÎ»ÖÃÏà½üµÄ¹Ø¼üÖ¡
-	 * @param percentage Ä¿±êÎ»ÖÃ£¬°Ù·Ö±È[0 ~ 1)
-	 * @return ³É¹¦·µ»Øtrue
+	 * Seekåˆ°ç›®æ ‡ä½ç½®ç›¸è¿‘çš„å…³é”®å¸§
+	 * @param percentage ç›®æ ‡ä½ç½®ï¼Œç™¾åˆ†æ¯”[0 ~ 1)
+	 * @return æˆåŠŸè¿”å›true
 	 */
 	bool Seek(double percentage);
 
@@ -79,19 +79,19 @@ public:
 	int height;
 private:
 	
-	//ÊÓÆµÁ÷Ë÷Òı
+	//è§†é¢‘æµç´¢å¼•
 	int videoStreamIndex = -1;
-	//ÊÓÆµÁ÷
+	//è§†é¢‘æµ
 	AVStream *videoStream = nullptr;
-	//½Ó·â×°ÉÏÏÂÎÄ
+	//æ¥å°è£…ä¸Šä¸‹æ–‡
 	AVFormatContext *ic = nullptr;
-	//½âÂëÆ÷ÉÏÏÂÎÄ
+	//è§£ç å™¨ä¸Šä¸‹æ–‡
 	AVCodecContext *codecCtx = nullptr;
 
 	AVFrame *frame = nullptr;
 	AVFrame *sws_frame = nullptr;
 
-	//ÏñËØ¸ñÊ½×ª»»ÉÏÏÂÎÄ
+	//åƒç´ æ ¼å¼è½¬æ¢ä¸Šä¸‹æ–‡
 	SwsContext *swsCtx = nullptr;
 
 	bool isOpened = false;

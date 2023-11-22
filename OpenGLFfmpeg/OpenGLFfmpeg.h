@@ -11,6 +11,7 @@
 #include "cmodel.h"
 #include "ctexture.h"
 #include "ctexture.h"
+#include "cvideo_capture.h"
 class OpenGLFfmpeg : public QWidget
 {
     Q_OBJECT
@@ -66,8 +67,9 @@ private:
 
 
     //GLuint program;
-    chen::ctexture* tex1;
-    chen::ctexture* tex2;
+    chen::ctexture* tex1; // YYYY
+    chen::ctexture* tex2; // UU
+    chen::ctexture* tex3; // VV
 
     //GLint smp1, smp2;
 
@@ -98,10 +100,16 @@ private:
     struct chen::Mesh* mesh = NULL;
 
     chen::cshader1* shader = NULL;
-    chen::cmodel* model = NULL;
+    //球面模型
+    chen::cmodel* quadmodel = NULL;
 
 
     //绘制两个图形
     chen::cshader1* shader2 = NULL;
-    chen::cmodel* model2 = NULL;
+    // 平面模型
+    chen::cmodel* spheremodel = NULL;
+    chen::cvideo_capture* video_capture_ptr=  NULL;
+
+
+    bool isVR360 = false;
 };

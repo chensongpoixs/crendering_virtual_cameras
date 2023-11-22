@@ -124,6 +124,10 @@ void OpenGLFfmpeg::keyReleaseEvent(QKeyEvent* event)
 	{
 		isPressE = false;
 	}
+	if (event->key() == Qt::Key_Space)
+	{
+		isVR360 = !isVR360;
+	}
 }
 
 void OpenGLFfmpeg::mousePressEvent(QMouseEvent* event)
@@ -157,99 +161,43 @@ bool OpenGLFfmpeg::event(QEvent* event)
 
 bool OpenGLFfmpeg::initializeGL()
 {
-	//mesh =  chen::LoadObjModel("assets/teapot.obj", true/*EBO 开启就不需要内存空间*/);
-	shader = new chen::cshader1("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
-	//program = chen::CreateGpuProgram("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
-	model = new chen::cmodel("assets/teapot.obj");
+	video_capture_ptr = new chen::cvideo_capture();
+	const char* media_url = "rtmp://ns8.indexforce.com/home/mystream";
+	//const char* media_url = "assets/we.mp4";
+	if (!video_capture_ptr->open(media_url, chen::PIX_FMT_YUV420P))
+	{
+		printf("open video url  %s failed !!!\n ", media_url);
+		throw;
+	}
+	 quadmodel = new chen::cmodel("assets/quad.obj");
 
 
-	shader2 = new chen::cshader1("assets/parse3dobjectmodel/vertexShader2.glsl", "assets/parse3dobjectmodel/frag/fragmentShader2.glsl");
-	//program = chen::CreateGpuProgram("assets/parse3dobjectmodel/vertexShader.glsl", "assets/parse3dobjectmodel/frag/fragmentShader.glsl");
-	model2 = new chen::cmodel("assets/teapot.obj");
+	 spheremodel = new chen::cmodel("assets/sphere.obj");
+	  
 
-	// 使用着色器程序
-	//glUseProgram(program);
-	//chen::check_error();
-	//assert(!glGetError());
-	// 获取shader 顶点pos
-	//GLint posLocation = glGetAttribLocation(program, "pos");
-	//GLint colorLocation = glGetAttribLocation(program, "color");
-	//GLint texcoordLocation = glGetAttribLocation(program, "texcoord");
+	if (video_capture_ptr->formatType == chen::PIX_FMT_YUV420P)
+	{
+		shader = new chen::cshader1("assets/ffmpeg/vertexShader.glsl", "assets/ffmpeg/fragment_yuv.glsl");
 
+		tex1 = new chen::ctexture(video_capture_ptr->width, video_capture_ptr->height, GL_LUMINANCE, GL_LUMINANCE, NULL);
 
-	//// uniform  纹理tex1
-	//smp1 = glGetUniformLocation(program, "smp1");
-	//smp2 = glGetUniformLocation(program, "smp2");
+		tex2 = new chen::ctexture(video_capture_ptr->width/2, video_capture_ptr->height/2, GL_LUMINANCE, GL_LUMINANCE, NULL);
+		tex3 = new chen::ctexture(video_capture_ptr->width/2, video_capture_ptr->height/2, GL_LUMINANCE, GL_LUMINANCE, NULL);
+	}
+	
 
+	////开启深度测试
+	//glEnable(GL_DEPTH_TEST);
+	////启用面剔除
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK); // GL_FRONT
 
-	//modelLocation = glGetUniformLocation(program, "modelMat");;
-	//viewLocation = glGetUniformLocation(program, "viewMat");;
-	//projLocation = glGetUniformLocation(program, "projMat");;
-
-	//GLint tLocation = glGetAttribLocation(program, "t");
-	chen::check_error();
-	//创建VAO
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	chen::check_error();
-	//VBO = chen::CreateGLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, mesh->vertexCount * sizeof(struct chen::Vertex), mesh->vertices);
-
-	////// 绑定一下 
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	//// shader --> 启用顶点属性
-	//glEnableVertexAttribArray(shader->posLocation);
-	//chen::check_error();
-	//// 告诉shader 顶点数据排列
-	////GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
-	//glVertexAttribPointer(
-	//	shader->posLocation, // 顶点属性ID
-	//	3, // 几个数据构成一组
-	//	GL_FLOAT, // 数据类型
-	//	GL_FALSE, // 
-	//	sizeof(float) * 8, // 步长
-	//	(const void*)(sizeof(float) * 0) // 偏移量,第一组数据的起始位置
-	//);
-	//chen::check_error();
-	//// shader --> 启用顶点属性
-	//glEnableVertexAttribArray(shader->colorLocation);
-	//chen::check_error();
-	//// 告诉shader 顶点数据排列
-	////GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
-	//glVertexAttribPointer(shader->colorLocation, 3,
-	//	GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 3));
-	//// shader --> 启用顶点属性
-	//glEnableVertexAttribArray(shader->texcoordLocation);
-	//chen::check_error();
-	//// 告诉shader 顶点数据排列
-	////GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer
-	//glVertexAttribPointer(shader->texcoordLocation, 2,
-	//	GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 6));
-
-
-
-	//chen::check_error();
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glBindVertexArray(0);
-
-
-	// 创建EBO
-	//EBO = chen::CreateGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, mesh->indexCount * sizeof(uint32_t), mesh->indices);
-	//////////////////////////////VAO 解绑后操作texcoord//////////////////////////////////////////
-	QImage img = QImage("assets/parse3dobjectmodel/we.jpg");
-	tex1 = new chen::ctexture(img.width(), img.height(), GL_RGBA, GL_BGRA, img.bits());
-
-	QImage img2 = QImage("assets/parse3dobjectmodel/we.jpg");
-	tex2 = new chen::ctexture(img2.width(), img2.height(), GL_RGBA, GL_BGRA, img2.bits());
-
-	//开启深度测试
+	//glPolygonMode(GL_FRONT, GL_FILL);
 	glEnable(GL_DEPTH_TEST);
 	//启用面剔除
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK); // GL_FRONT
-
+	glCullFace(GL_BACK);
 	glPolygonMode(GL_FRONT, GL_FILL);
-
 	//assert(!glGetError());
 	return true;
 }
@@ -337,90 +285,53 @@ void OpenGLFfmpeg::Renderer()
 	//, float aspectRatio, float nearPlane, float farPlane
 	projMat.perspective(45, width() / (float)height(), 0.1f, 100);
 
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// 激活shader程序
-	//glUseProgram(program);
-	model->apply_shader(shader);
-	model->set_texture("smp1", tex1);
-	////激活纹理0号单元
-	//glActiveTexture(GL_TEXTURE0);
-	////绑定纹理单元
-	//glBindTexture(GL_TEXTURE_2D, tex1);
-	//// 因为激活是0号单元所以使用0
-	//glUniform1i(smp1, 0);
-
-	model->set_texture("smp2", tex2);
-	// 设置角度
-	model->set_position(0, 0, -2);
-	model->set_rotation(30, 0, 1, 0);
-	model->set_scale(1.0f, 1.0f, 1.0f);
 
 
-	model->draw(camera.GetViewMat().constData(), projMat.constData());
 
+retry:
+	AVFrame* frame = NULL;
+	int ret = video_capture_ptr->retrieve(frame);
+	if (ret < 0)
 	{
-		model2->apply_shader(shader2);
-		model2->set_texture("smp1", tex1);
-		model2->set_texture("smp2", tex2);
-		// 设置角度
-		model2->set_position(4, 0, -2);
-		model2->set_rotation(30, 0, 1, 0);
-		model2->set_scale(1.0f, 1.0f, 1.0f);
-		model2->draw(camera.GetViewMat().constData(), projMat.constData());
-
-
+		throw;
 	}
-	//激活纹理0号单元
-	//glActiveTexture(GL_TEXTURE5);
-	////绑定纹理单元
-	//glBindTexture(GL_TEXTURE_2D, tex2);
-	//// 因为激活是0号单元所以使用0
-	//glUniform1i(smp2, 5);
-
-	//// 模型矩阵
-	//QMatrix4x4 modelMat;
-	//// 视图矩阵
-	////QMatrix4x4 viewMat;
-	//
-
-	//// 移动模型
-	//modelMat.translate(0, 0, -2);
-	//// 转动
-	////modelMat.rotate(30, QVector3D(0, 0, 1));
-	//// 
-	//modelMat.scale(1,1, 1);
-
-	//// 眼睛的位置
-	///*QVector3D eyePoint = QVector3D(0, 0, 0);
-	//viewMat.lookAt(eyePoint, eyePoint + QVector3D(0, 0, -1), QVector3D(0, 1, 0));*/
-	//
-
-	////camera.SetRotation(0, 180, 0);
-
-	////设置矩阵ｉＤ
-	//glUniformMatrix4fv(shader->modelLocation, 1, GL_FALSE, modelMat.constData());
-	//glUniformMatrix4fv(shader->viewLocation, 1, GL_FALSE, camera.GetViewMat().constData());
-	//glUniformMatrix4fv(shader->projLocation, 1, GL_FALSE, projMat.constData());
+	//读取文件结束位置了
+	if (ret == 0)
+	{
+		video_capture_ptr->seek(0);
+		goto retry;
+	}
+	//printf("[pts = %u]\n", frame->pts);
+	chen::cmodel* model = isVR360 ? spheremodel : quadmodel;
+	//图形矩阵
+	const float* _videmat = isVR360 ? camera.GetViewMat().constData() : QMatrix4x4().constData();
+	// 投影矩阵
+	const float* _projmat = isVR360 ? projMat.constData() : QMatrix4x4().constData();
+	if (video_capture_ptr->formatType == chen::PIX_FMT_YUV420P)
+	{
+		tex1->update_texture2d(frame->width, frame->height, frame->linesize[0], frame->data[0]);
+		tex2->update_texture2d(frame->width/2, frame->height/2, frame->linesize[1], frame->data[1]);
+		tex3->update_texture2d(frame->width/2, frame->height/2, frame->linesize[2], frame->data[2]);
 
 
+		model->apply_shader(shader);
+		model->set_texture("smp1", tex1);
+		model->set_texture("smp2", tex2);
+		model->set_texture("smp3", tex3);
+		// 设置角度
+		//model->set_position(0, 0, -2);
+		//model->set_rotation(30, 0, 1, 0);
+		//model->set_scale(1.0f, 1.0f, 1.0f);
 
-	// 要绘制两个三角形要使用VAO对象
-	 // 绑定VAO
-	//glBindVertexArray(VAO);
-	// glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//绘制模式  三个顶点
-	//  glDrawArrays(GL_TRIANGLES, 0, mesh->indexCount);
-	//// 绑定EBO
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);  //EBO 开启就不需要内存空间
-	//// EBO绘制的方式 
-	//glDrawElements(GL_TRIANGLES, mesh->indexCount, GL_UNSIGNED_INT, NULL);
-	//glDrawElements(GL_TRIANGLES, 3, GL_FLOAT, 0);
-	// 绑定VAO2
-	//glBindVertexArray(VAO2);
-	//绘制模式  三个顶点
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
-	//glDrawElements(GL_TRIANGLES, 3, GL_FLOAT, 0);
+
+		model->draw(_videmat, _projmat);
+	} 
+	
+
+	 
+	
 	SwapBuffers(dc);
 }
 

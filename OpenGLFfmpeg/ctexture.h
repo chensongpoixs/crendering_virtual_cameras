@@ -38,6 +38,9 @@ namespace chen {
 
 	public:
 
+		void update_texture2d(int width, int hieght, int linesize, const void * data);
+	public:
+
 
 		int width;
 		int height;
