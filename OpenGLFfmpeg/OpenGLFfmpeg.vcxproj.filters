@@ -24,6 +24,9 @@
     <Filter Include="video_capture">
       <UniqueIdentifier>{42179d50-4351-48cf-9da6-d6afd702b22e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="websocket">
+      <UniqueIdentifier>{ee6fb1c4-53d2-4b94-8856-7818229535b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="OpenGLFfmpeg.qrc">
@@ -61,6 +64,21 @@
     <ClCompile Include="cvideo_capture.cpp">
       <Filter>video_capture</Filter>
     </ClCompile>
+    <ClCompile Include="cwebsocket_msg_queue.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_msg_reserve.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_server_mgr.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_session.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cnet_type.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -83,6 +101,27 @@
     </ClInclude>
     <ClInclude Include="cvideo_capture.h">
       <Filter>video_capture</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_msg_queue.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_msg_reserve.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_server_mgr.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_session.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cnoncopyable.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cnet_type.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cnet_define.h">
+      <Filter>websocket</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
