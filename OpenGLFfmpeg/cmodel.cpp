@@ -33,6 +33,7 @@ namespace chen {
 		position = QVector3D(0.0f, 0.0f, 0.0f);
 		axis = QVector3D(0.0f, 1.0f, 0.0f);
 		scale = QVector3D(1.0f, 1.0f, 1.0f);
+		angle = 0.0f;
 	}
 	cmodel::~cmodel()
 	{

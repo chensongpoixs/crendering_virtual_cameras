@@ -79,6 +79,9 @@
     <ClCompile Include="cnet_type.cpp">
       <Filter>websocket</Filter>
     </ClCompile>
+    <ClCompile Include="cbase64.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -122,6 +125,9 @@
     </ClInclude>
     <ClInclude Include="cnet_define.h">
       <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cbase64.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -11,7 +11,9 @@
 #include <QDateTime> 
 #include <cshader.h>
 #include "OpenGLFfmpeg.h"
-
+#include "cbase64.h"
+#include <turbojpeg.h>
+#include "cwebsocket_server_mgr.h"
 OpenGLFfmpeg::OpenGLFfmpeg(QWidget *parent)
     : QWidget(parent, Qt::MSWindowsOwnDC)
 {
@@ -31,7 +33,7 @@ OpenGLFfmpeg::OpenGLFfmpeg(QWidget *parent)
 		//qDebug() << "glewInit failed!";
 		throw;
 	}
-
+	byte = new unsigned char[1920 *1080 * 4];
 	QTimer* timer = new QTimer(parent);
 	connect(timer, &QTimer::timeout, this, &OpenGLFfmpeg::Tick);
 	timer->start(20);
@@ -162,9 +164,9 @@ bool OpenGLFfmpeg::event(QEvent* event)
 bool OpenGLFfmpeg::initializeGL()
 {
 	video_capture_ptr = new chen::cvideo_capture();
-	const char* media_url = "rtmp://ns8.indexforce.com/home/mystream";
-	//const char* media_url = "assets/we.mp4";
-	if (!video_capture_ptr->open(media_url, chen::PIX_FMT_YUV420P))
+	//const char* media_url = "rtmp://ns8.indexforce.com/home/mystream";
+	const char* media_url = "D://Tools//input.mp4";
+	if (!video_capture_ptr->open(media_url, chen::PIX_FMT_BGR))
 	{
 		printf("open video url  %s failed !!!\n ", media_url);
 		throw;
@@ -184,7 +186,11 @@ bool OpenGLFfmpeg::initializeGL()
 		tex2 = new chen::ctexture(video_capture_ptr->width/2, video_capture_ptr->height/2, GL_LUMINANCE, GL_LUMINANCE, NULL);
 		tex3 = new chen::ctexture(video_capture_ptr->width/2, video_capture_ptr->height/2, GL_LUMINANCE, GL_LUMINANCE, NULL);
 	}
-	
+	else if (video_capture_ptr->formatType == chen::PIX_FMT_BGR)
+	{
+		shader = new chen::cshader1("assets/ffmpeg/vertexShader.glsl", "assets/ffmpeg/fragmentShader_bgr.glsl");
+		tex1 = new chen::ctexture(video_capture_ptr->width, video_capture_ptr->height, GL_RGB, GL_RGB, NULL);
+	}
 
 	////开启深度测试
 	//glEnable(GL_DEPTH_TEST);
@@ -198,6 +204,33 @@ bool OpenGLFfmpeg::initializeGL()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glPolygonMode(GL_FRONT, GL_FILL);
+
+
+	chen::g_websocket_server_mgr.init();
+	
+	chen::g_websocket_server_mgr.set_connect_callback(
+		std::bind(&OpenGLFfmpeg::on_connect, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)
+	);
+
+	chen::g_websocket_server_mgr.set_msg_callback(
+		std::bind(&OpenGLFfmpeg::on_msg_receive, this, std::placeholders::_1, std::placeholders::_2
+			, std::placeholders::_3)
+	);
+
+	chen::g_websocket_server_mgr.set_disconnect_callback(
+		std::bind(&OpenGLFfmpeg::on_disconnect, this, std::placeholders::_1)
+	);
+
+	chen::g_websocket_server_mgr.startup(1, "0.0.0.0", 8700);
+
+
+	std::thread([]() {
+		while (true)
+		{
+			chen::g_websocket_server_mgr.process_msg();
+			std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		}
+		}).detach();
 	//assert(!glGetError());
 	return true;
 }
@@ -236,7 +269,102 @@ bool OpenGLFfmpeg::_gl_update()
 	QApplication::postEvent(this, new QtEvent(QtEvent::GL_Renderer));
 	return true;
 }
+void OpenGLFfmpeg::on_connect(uint64_t session_id, const char* ip, uint16_t port)
+{
 
+}
+
+
+
+
+
+//std::unique_ptr<unsigned char[]> get_jpeg_decompress_data2(const char* image_name, int& width, int& height, int& channels)
+//{
+//	/*FILE* infile = fopen(image_name, "rb");
+//	if (infile == nullptr) {
+//		fprintf(stderr, "can't open %s\n", image_name);
+//		return nullptr;
+//	}
+//
+//	fseek(infile, 0, SEEK_END);
+//	unsigned long srcSize = ftell(infile);
+//	std::unique_ptr<unsigned char[]> srcBuf(new unsigned char[srcSize]);
+//	fseek(infile, 0, SEEK_SET);
+//	fread(srcBuf.get(), srcSize, 1, infile);
+//	fclose(infile);*/
+//
+//	tjhandle handle = tjInitDecompress();
+//	int subsamp, cs;
+//	int ret = tjDecompressHeader3(handle, srcBuf.get(), srcSize, &width, &height, &subsamp, &cs);
+//	if (cs == TJCS_GRAY) channels = 1;
+//	else channels = 3;
+//
+//	int pf = TJCS_RGB;
+//	int ps = tjPixelSize[pf];
+//	std::unique_ptr<unsigned char[]> data(new unsigned char[width * height * channels]);
+//	ret = tjDecompress2(handle, srcBuf.get(), srcSize, data.get(), width, width * channels, height, TJPF_RGB, TJFLAG_NOREALLOC);
+//
+//	tjDestroy(handle);
+//
+//	return data;
+//}
+
+ 
+static const char HEX[16] = {
+			'0', '1', '2', '3',
+			'4', '5', '6', '7',
+			'8', '9', 'a', 'b',
+			'c', 'd', 'e', 'f'
+};
+
+std::string get_hex_str(const void* _buf, int num)
+{
+	std::string str;
+	str.reserve(num << 1);
+	const unsigned char* buf = (const unsigned char*)_buf;
+
+	unsigned char tmp;
+	for (int i = 0; i < num; ++i)
+	{
+		tmp = buf[i];
+		str.append(1, HEX[tmp / 16]);
+		str.append(1, HEX[tmp % 16]);
+	}
+	return str;
+}
+void OpenGLFfmpeg::on_msg_receive(uint64_t session_id, const void* p, uint32_t size)
+{
+	//std::string www(p, size);
+std::string www =  chen::base64_decode(std::string((char*)p, size));
+	printf("[%s][%d]\n", __FUNCTION__, __LINE__);
+	tjhandle handle = tjInitDecompress();
+	int subsamp, cs;
+	int width;
+	int height;
+	int channels;
+	int ret = tjDecompressHeader3(handle, (const unsigned char*)www.c_str(), www.length(), &width, &height, &subsamp, &cs);
+	if (cs == TJCS_GRAY) channels = 1;
+	else channels = 3;
+
+	int pf = TJCS_RGB;
+	int ps = tjPixelSize[pf];
+	//std::unique_ptr<unsigned char[]> data(new unsigned char[width * height * channels]);
+	ret = tjDecompress2(handle, (const unsigned char*)www.c_str(), www.length(), byte, width, width * channels, height, TJPF_BGR, TJFLAG_NOREALLOC);
+
+	tjDestroy(handle);
+	/*static FILE* out_file_ptr = fopen("chensong.rgb", "wb+");
+	if (out_file_ptr)
+	{
+		fwrite(byte, 1, width * height * 3, out_file_ptr);
+		fflush(out_file_ptr);
+
+	}*/
+
+	printf("[%s]\n", get_hex_str(byte, 50).c_str());
+}
+void OpenGLFfmpeg::on_disconnect(uint64_t session_id)
+{
+}
 
 void OpenGLFfmpeg::Tick()
 {
@@ -311,9 +439,9 @@ retry:
 	const float* _projmat = isVR360 ? projMat.constData() : QMatrix4x4().constData();
 	if (video_capture_ptr->formatType == chen::PIX_FMT_YUV420P)
 	{
-		tex1->update_texture2d(frame->width, frame->height, frame->linesize[0], frame->data[0]);
-		tex2->update_texture2d(frame->width/2, frame->height/2, frame->linesize[1], frame->data[1]);
-		tex3->update_texture2d(frame->width/2, frame->height/2, frame->linesize[2], frame->data[2]);
+		tex1->update_texture2d(frame->width, frame->height, frame->linesize[0], byte);
+		tex2->update_texture2d(frame->width/2, frame->height/2, frame->linesize[1], byte + (1920 *1080));
+		tex3->update_texture2d(frame->width/2, frame->height/2, frame->linesize[2], byte + ((1920 * 1080)  + (1920 * 1080)/4     ));
 
 
 		model->apply_shader(shader);
@@ -328,7 +456,19 @@ retry:
 
 		model->draw(_videmat, _projmat);
 	} 
-	
+	else if (video_capture_ptr->formatType == chen::PIX_FMT_RGB || 
+		video_capture_ptr->formatType == chen::PIX_FMT_BGR)
+	{
+		tex1->update_texture2d(frame->width, frame->height, frame->linesize[0]/3, byte);
+		model->apply_shader(shader);
+		model->set_texture("smp1", tex1);
+		model->draw(_videmat, _projmat);
+		//tex1->UpdateTexture2D(frame->width, frame->height, frame->linesize[0] / 3, frame->data[0]);
+
+		//model->ApplyShader(shader);
+		//model->SetTexture2D("smp1", tex1);
+		//model->Draw(_videMat, _projMat);
+	}
 
 	 
 	

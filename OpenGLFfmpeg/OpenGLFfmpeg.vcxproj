@@ -63,19 +63,27 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <OutDir>$(SolutionDir)..\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(C_INCLUDE)\boost_1_66_0\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>$(C_INCLUDE)\boost_1_66_0\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>$(C_INCLUDE)/webrtc/m110_include\third_party\libjpeg_turbo;$(C_INCLUDE)\boost_1_66_0\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(C_INCLUDE)/webrtc/lib/x64/m110_release;$(C_INCLUDE)\boost_1_66_0\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <IncludePath>$(C_INCLUDE)/webrtc/m110_include\third_party\libjpeg_turbo;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(C_INCLUDE)/webrtc/lib/x64/m110_release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>../dep/include/glew;../dep/include/ffmpeg;.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>libboost_atomic-vc141-mt-gd-x64-1_66.lib;libboost_chrono-vc141-mt-gd-x64-1_66.lib;libboost_container-vc141-mt-gd-x64-1_66.lib;libboost_context-vc141-mt-gd-x64-1_66.lib;libboost_coroutine-vc141-mt-gd-x64-1_66.lib;libboost_date_time-vc141-mt-gd-x64-1_66.lib;libboost_exception-vc141-mt-gd-x64-1_66.lib;libboost_fiber-vc141-mt-gd-x64-1_66.lib;libboost_filesystem-vc141-mt-gd-x64-1_66.lib;libboost_graph-vc141-mt-gd-x64-1_66.lib;libboost_iostreams-vc141-mt-gd-x64-1_66.lib;libboost_locale-vc141-mt-gd-x64-1_66.lib;libboost_log-vc141-mt-gd-x64-1_66.lib;libboost_log_setup-vc141-mt-gd-x64-1_66.lib;libboost_math_c99-vc141-mt-gd-x64-1_66.lib;libboost_math_c99f-vc141-mt-gd-x64-1_66.lib;libboost_math_c99l-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1f-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1l-vc141-mt-gd-x64-1_66.lib;libboost_prg_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_program_options-vc141-mt-gd-x64-1_66.lib;libboost_python-vc141-mt-gd-x64-1_66.lib;libboost_random-vc141-mt-gd-x64-1_66.lib;libboost_regex-vc141-mt-gd-x64-1_66.lib;libboost_serialization-vc141-mt-gd-x64-1_66.lib;libboost_signals-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_noop-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg_cached-vc141-mt-gd-x64-1_66.lib;libboost_system-vc141-mt-gd-x64-1_66.lib;libboost_test_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_thread-vc141-mt-gd-x64-1_66.lib;libboost_timer-vc141-mt-gd-x64-1_66.lib;libboost_type_erasure-vc141-mt-gd-x64-1_66.lib;libboost_unit_test_framework-vc141-mt-gd-x64-1_66.lib;libboost_wave-vc141-mt-gd-x64-1_66.lib;libboost_wserialization-vc141-mt-gd-x64-1_66.lib;%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
+      <AdditionalDependencies>turbojpeg.lib;simd.lib;simd_asm.lib;libjpeg.lib;libboost_atomic-vc141-mt-gd-x64-1_66.lib;libboost_chrono-vc141-mt-gd-x64-1_66.lib;libboost_container-vc141-mt-gd-x64-1_66.lib;libboost_context-vc141-mt-gd-x64-1_66.lib;libboost_coroutine-vc141-mt-gd-x64-1_66.lib;libboost_date_time-vc141-mt-gd-x64-1_66.lib;libboost_exception-vc141-mt-gd-x64-1_66.lib;libboost_fiber-vc141-mt-gd-x64-1_66.lib;libboost_filesystem-vc141-mt-gd-x64-1_66.lib;libboost_graph-vc141-mt-gd-x64-1_66.lib;libboost_iostreams-vc141-mt-gd-x64-1_66.lib;libboost_locale-vc141-mt-gd-x64-1_66.lib;libboost_log-vc141-mt-gd-x64-1_66.lib;libboost_log_setup-vc141-mt-gd-x64-1_66.lib;libboost_math_c99-vc141-mt-gd-x64-1_66.lib;libboost_math_c99f-vc141-mt-gd-x64-1_66.lib;libboost_math_c99l-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1f-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1l-vc141-mt-gd-x64-1_66.lib;libboost_prg_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_program_options-vc141-mt-gd-x64-1_66.lib;libboost_python-vc141-mt-gd-x64-1_66.lib;libboost_random-vc141-mt-gd-x64-1_66.lib;libboost_regex-vc141-mt-gd-x64-1_66.lib;libboost_serialization-vc141-mt-gd-x64-1_66.lib;libboost_signals-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_noop-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg_cached-vc141-mt-gd-x64-1_66.lib;libboost_system-vc141-mt-gd-x64-1_66.lib;libboost_test_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_thread-vc141-mt-gd-x64-1_66.lib;libboost_timer-vc141-mt-gd-x64-1_66.lib;libboost_type_erasure-vc141-mt-gd-x64-1_66.lib;libboost_unit_test_framework-vc141-mt-gd-x64-1_66.lib;libboost_wave-vc141-mt-gd-x64-1_66.lib;libboost_wserialization-vc141-mt-gd-x64-1_66.lib;%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../dep/lib/glew/x64;../dep/lib/ffmpeg;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>turbojpeg.lib;simd.lib;simd_asm.lib;libjpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -107,6 +115,7 @@
     <QtUic Include="OpenGLFfmpeg.ui" />
     <QtMoc Include="OpenGLFfmpeg.h" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="cbase64.cpp" />
     <ClCompile Include="cmodel.cpp" />
     <ClCompile Include="cnet_type.cpp" />
     <ClCompile Include="cshader.cpp" />
@@ -122,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="cbase64.h" />
     <ClInclude Include="cmodel.h" />
     <ClInclude Include="cnet_define.h" />
     <ClInclude Include="cnet_type.h" />

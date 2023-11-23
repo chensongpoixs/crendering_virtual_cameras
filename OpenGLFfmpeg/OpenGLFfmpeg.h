@@ -17,7 +17,7 @@ class OpenGLFfmpeg : public QWidget
     Q_OBJECT
 
 public:
-    OpenGLFfmpeg(QWidget *parent = nullptr);
+    OpenGLFfmpeg(QWidget* parent = nullptr);
     ~OpenGLFfmpeg();
     //  // 设置这个就不能使用QT渲染的了  就需要重新实现QPaintEngine函数
 //setAttribute(Qt::WA_PaintOnScreen);
@@ -48,7 +48,9 @@ private:
     bool _gl_update();
 
 
-
+    void on_connect(uint64_t session_id, const char* ip, uint16_t port);
+    void on_msg_receive(uint64_t session_id, const void* p, uint32_t size);
+    void on_disconnect(uint64_t session_id);
 private slots:
     void Tick();
 private:
@@ -59,6 +61,7 @@ private:
 
 
 
+    unsigned char* byte;
 
 
 
@@ -108,7 +111,7 @@ private:
     chen::cshader1* shader2 = NULL;
     // 平面模型
     chen::cmodel* spheremodel = NULL;
-    chen::cvideo_capture* video_capture_ptr=  NULL;
+    chen::cvideo_capture* video_capture_ptr = NULL;
 
 
     bool isVR360 = false;
