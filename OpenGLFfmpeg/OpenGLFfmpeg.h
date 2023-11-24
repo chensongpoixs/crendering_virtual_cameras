@@ -12,6 +12,8 @@
 #include "ctexture.h"
 #include "ctexture.h"
 #include "cvideo_capture.h"
+#include "cwebsocket_mgr.h"
+
 class OpenGLFfmpeg : public QWidget
 {
     Q_OBJECT
@@ -115,4 +117,6 @@ private:
 
 
     bool isVR360 = false;
+
+    chen::cwebsocket_mgr m_websocket_mgr;
 };

@@ -205,8 +205,10 @@ bool OpenGLFfmpeg::initializeGL()
 	glCullFace(GL_BACK);
 	glPolygonMode(GL_FRONT, GL_FILL);
 
-
-	chen::g_websocket_server_mgr.init();
+	std::string url = "ws://192.168.1.133:8800";
+	m_websocket_mgr.init(url);
+	m_websocket_mgr.startup();
+	/*chen::g_websocket_server_mgr.init();
 	
 	chen::g_websocket_server_mgr.set_connect_callback(
 		std::bind(&OpenGLFfmpeg::on_connect, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)
@@ -230,8 +232,47 @@ bool OpenGLFfmpeg::initializeGL()
 			chen::g_websocket_server_mgr.process_msg();
 			std::this_thread::sleep_for(std::chrono::milliseconds(50));
 		}
-		}).detach();
+		}).detach();*/
 	//assert(!glGetError());
+
+	std::thread([&]() 
+		{
+			while (true)
+			{
+				std::list<std::string> msg;
+				m_websocket_mgr.presssmsg(msg);
+				while (msg.size()>0 )
+				{
+					std::string www = chen::base64_decode(msg.front());
+					printf("[%s][%d]msg.size() = %u\n", __FUNCTION__, __LINE__, msg.size());
+					tjhandle handle = tjInitDecompress();
+					int subsamp, cs;
+					int width;
+					int height;
+					int channels;
+					int ret = tjDecompressHeader3(handle, (const unsigned char*)www.c_str(), www.length(), &width, &height, &subsamp, &cs);
+					if (cs == TJCS_GRAY) channels = 1;
+					else channels = 3;
+
+					int pf = TJCS_RGB;
+					int ps = tjPixelSize[pf];
+					//std::unique_ptr<unsigned char[]> data(new unsigned char[width * height * channels]);
+					ret = tjDecompress2(handle, (const unsigned char*)www.c_str(), www.length(), byte, width, width * channels, height, TJPF_BGR, TJFLAG_NOREALLOC);
+
+					tjDestroy(handle);
+					/*static FILE* out_file_ptr = fopen("chensong.rgb", "wb+");
+					if (out_file_ptr)
+					{
+						fwrite(byte, 1, width * height * 3, out_file_ptr);
+						fflush(out_file_ptr);
+
+					}*/
+
+					//printf("[%s]\n", get_hex_str(byte, 50).c_str());
+					msg.pop_front();
+				}
+			}
+		}).detach();
 	return true;
 }
 

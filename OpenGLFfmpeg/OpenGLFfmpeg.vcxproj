@@ -111,6 +111,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="wsclient.cpp" />
     <QtRcc Include="OpenGLFfmpeg.qrc" />
     <QtUic Include="OpenGLFfmpeg.ui" />
     <QtMoc Include="OpenGLFfmpeg.h" />
@@ -122,6 +123,7 @@
     <ClCompile Include="ctexture.cpp" />
     <ClCompile Include="cutil.cpp" />
     <ClCompile Include="cvideo_capture.cpp" />
+    <ClCompile Include="cwebsocket_mgr.cpp" />
     <ClCompile Include="cwebsocket_msg_queue.cpp" />
     <ClCompile Include="cwebsocket_msg_reserve.cpp" />
     <ClCompile Include="cwebsocket_server_mgr.cpp" />
@@ -140,11 +142,13 @@
     <ClInclude Include="ctexture.h" />
     <ClInclude Include="cutil.h" />
     <ClInclude Include="cvideo_capture.h" />
+    <ClInclude Include="cwebsocket_mgr.h" />
     <ClInclude Include="cwebsocket_msg_queue.h" />
     <ClInclude Include="cwebsocket_msg_reserve.h" />
     <ClInclude Include="cwebsocket_server_mgr.h" />
     <ClInclude Include="cwebsocket_session.h" />
     <ClInclude Include="QtEvent.h" />
+    <ClInclude Include="wsclient.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

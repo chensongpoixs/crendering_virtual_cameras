@@ -69,7 +69,7 @@ namespace chen {
 		~cwebsocket_server_mgr();
 
 	public:
-
+		
 		bool 		init();
 
 		/**
