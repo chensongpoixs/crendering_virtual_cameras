@@ -62,3 +62,8 @@ src/QtRendererVideo/x64
 /OpenGLFfmpeg/OpenGLFfmpeg.vcxproj.user
 /OpenGLFfmpeg/x64
 /QtRendererVideo/x64/Release
+/bin/assets/obj/maps
+/x64/Release
+/opengl-tutorials
+/bin/assets/obj
+/bin/assets

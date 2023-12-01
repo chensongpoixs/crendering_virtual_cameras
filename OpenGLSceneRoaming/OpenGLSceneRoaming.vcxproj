@@ -63,6 +63,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <OutDir>$(SolutionDir)..\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <ExternalIncludePath>D:\dep\detours\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\dep\detours\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
   </PropertyGroup>
@@ -82,7 +84,7 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -103,12 +105,14 @@
     <QtUic Include="OpenGLSceneRoaming.ui" />
     <QtMoc Include="OpenGLSceneRoaming.h" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="cinject.cpp" />
     <ClCompile Include="cutil.cpp" />
     <ClCompile Include="OpenGLSceneRoaming.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="cinject.h" />
     <ClInclude Include="cutil.h" />
     <ClInclude Include="QtEvent.h" />
   </ItemGroup>
