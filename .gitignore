@@ -67,3 +67,6 @@ src/QtRendererVideo/x64
 /opengl-tutorials
 /bin/assets/obj
 /bin/assets
+/x64
+/OpenGLEncode/OpenGLEncode.vcxproj.user
+/OpenGLEncode/x64/Debug/OpenGLEncode.tlog
