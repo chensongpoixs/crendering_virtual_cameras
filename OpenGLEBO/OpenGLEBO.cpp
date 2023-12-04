@@ -61,7 +61,7 @@ OpenGLEBO::~OpenGLEBO()
 
 void OpenGLEBO::resizeEvent(QResizeEvent* event)
 {
-	// 绘制的大小
+	// 绘制窗口的大小 TODO@chensong 20231204 WebGL中遇到窗口问题 
 	glViewport(0, 0, event->size().width(), event->size().height());
 	_gl_update();
 }

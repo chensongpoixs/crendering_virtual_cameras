@@ -58,7 +58,7 @@ OpenGLEncode::~OpenGLEncode()
 
 void OpenGLEncode::resizeEvent(QResizeEvent* event)
 {
-	// 绘制的大小
+	// 绘制的大小 TODO@chensong 20231204 WebGL中遇到窗口问题 
 	glViewport(0, 0, event->size().width(), event->size().height());
 	_gl_update();
 }
@@ -162,7 +162,8 @@ bool OpenGLEncode::initializeGL()
 {
 	video_capture_ptr = new chen::cvideo_capture();
 	//const char* media_url = "rtmp://ns8.indexforce.com/home/mystream";
-	const char* media_url = "D://Tools//input.mp4";
+	//const char* media_url = "D://Tools//input.mp4";
+	const char* media_url = "rtsp://192.168.1.175:9900/VisDrone";
 	if (!video_capture_ptr->open(media_url, chen::PIX_FMT_BGR))
 	{
 		printf("open video url  %s failed !!!\n ", media_url);
