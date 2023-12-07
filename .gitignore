@@ -71,3 +71,5 @@ src/QtRendererVideo/x64
 /OpenGLEncode/OpenGLEncode.vcxproj.user
 /OpenGLEncode/x64/Debug/OpenGLEncode.tlog
 /OpenGLEncode/x64
+/OpenGLRtspClient/OpenGLRtspClient.vcxproj.user
+/OpenGLRtspClient/x64

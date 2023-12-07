@@ -1,0 +1,4 @@
+<RCC>
+    <qresource prefix="OpenGLRtspClient">
+    </qresource>
+</RCC>
