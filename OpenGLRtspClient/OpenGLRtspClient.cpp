@@ -161,10 +161,12 @@ bool OpenGLRtspClient::event(QEvent* event)
 bool OpenGLRtspClient::initializeGL()
 {
 	video_capture_ptr = new chen::cvideo_capture();
-	const char* media_url = "rtmp://ns8.indexforce.com/home/mystream";
-	//const char* media_url = "D://Tools//input.mp4";
-	//const char* media_url = "rtsp://192.168.1.175:9900/VisDrone";
-	if (!video_capture_ptr->open(media_url, chen::PIX_FMT_BGR))
+	//const char* media_url = "rtmp://ns8.indexforce.com/home/mystream";
+	//const char* media_url = "D:/Work/Video/input.mkv";
+	// test.mkv
+	const char* media_url = "D:/bilibili/test.mkv";
+	//const char* media_url = "rtsp://admin:Cs@563519@192.168.1.64/streaming/channels/101";
+	if (!video_capture_ptr->open(media_url, chen::PIX_FMT_YUV420P))
 	{
 		printf("open video url  %s failed !!!\n ", media_url);
 		throw;
@@ -311,6 +313,10 @@ void OpenGLRtspClient::Tick()
 	}
 	_gl_update();
 }
+
+void OpenGLRtspClient::pcm_player()
+{
+}
 void OpenGLRtspClient::Renderer()
 {
 	// 投影矩阵
@@ -329,6 +335,7 @@ retry:
 	int ret = video_capture_ptr->retrieve(frame);
 	if (ret < 0)
 	{
+		//goto retry;
 		throw;
 	}
 	//读取文件结束位置了

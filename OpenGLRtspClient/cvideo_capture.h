@@ -29,14 +29,33 @@ purpose:		camera
 #include <stdint.h>
 #include <GL/eglew.h>
 #include <vector>
+#include <QtCore/QCoreApplication>
+#include <QFile>
+#include <QAudioFormat>
+#include <QAudioOutput>
+#include <QDebug>
+#include <QThread>
 #include "ctexture.h" 
+
 extern "C"
 {
 #include <libavutil/frame.h>
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
 #include <libavcodec/avcodec.h>
+#include "libavcodec/avcodec.h"
+#include "libavfilter/avfilter.h"
+#include "libavformat/avformat.h"
+#include "libavutil/avutil.h"
+#include "libavutil/ffversion.h"
+#include "libswresample/swresample.h"
+#include "libswscale/swscale.h"
+#include "libpostproc/postprocess.h"
 }
+
+
+#include <condition_variable>
+#include <mutex>
 namespace chen {
 
 	enum PixelFormatType
@@ -78,11 +97,28 @@ namespace chen {
 			, height(0)
 			, video_stream_index(-1)
 			, video_stream(NULL)
+			, audio_stream_index_(-1)
+			, audio_stream_(NULL)
+			, audio_codec_ctx(NULL)
 			, ic(NULL)
 			, codec_ctx(NULL)
 			, frame(NULL)
 			, sws_frame(NULL)
 			, sws_ctx(NULL)
+			, info_()
+			, fmt_()
+			, audio_(nullptr)
+			, io_(nullptr)
+			, audio_frame_(nullptr)
+			, audio_swr_ctx_(nullptr)
+			, audio_out_buffer_(nullptr)
+			, out_channel_layout_(-1)
+			, out_sample_fmt_(AV_SAMPLE_FMT_NONE)
+			, out_sample_rate_(-1)
+			//, out_sample_rate_
+			, out_channels_(-1)
+			, sleep_time_(0.0)
+			, audio_queue_()
 		{
 			::avformat_network_init();
 		}
@@ -102,6 +138,9 @@ namespace chen {
 
 		// 关闭并释放资源
 		void close();
+
+
+		void init_audio_device();
 
 		/**
 		* 读取一帧视频数据
@@ -123,7 +162,11 @@ namespace chen {
 		* @return 成功返回 true
 		*/
 		bool seek(double percentage);
+	private:
+		void _audio_pthread();
+
 	public:
+		
 	//private:
 		bool is_opened;
 		PixelFormatType formatType ;
@@ -135,19 +178,45 @@ namespace chen {
 		// 视频流
 		AVStream* video_stream;
 
+		//音频数据
+		int audio_stream_index_;
+		AVStream* audio_stream_;
+
+		AVCodecContext* audio_codec_ctx;
+
 		//接封装上下文
 		AVFormatContext* ic;
 		// 解码器上下文
 		AVCodecContext* codec_ctx;
 		
 		AVFrame* frame;
+
+
+		
 		AVFrame* sws_frame;
 
 		//像素格式转换上下文
 		SwsContext* sws_ctx;
 
-		
+		QAudioDeviceInfo info_;
+		QAudioFormat fmt_;
+		QAudioOutput* audio_;
+		QIODevice* io_;
+		AVFrame* audio_frame_;
+		SwrContext *audio_swr_ctx_;
+		uint8_t *audio_out_buffer_;
+		uint64_t out_channel_layout_;
+		enum AVSampleFormat out_sample_fmt_;
+		int out_sample_rate_;
+		int out_channels_;
+		double sleep_time_;
+	
+		std::thread			audio_thread_;
 
+
+		std::list< AVPacket*>  audio_queue_;
+		std::mutex             audio_lock_;
+		std::condition_variable  cond_;
 	};
 
 

@@ -38,6 +38,10 @@ public:
     bool event(QEvent* event);
 
 
+
+
+	void pcm_player();
+
     bool initializeGL();
 
 

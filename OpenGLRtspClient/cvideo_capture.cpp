@@ -23,11 +23,17 @@ purpose:		camera
 ************************************************************************************************/
 
 #include "cvideo_capture.h"
-
+#include <QString>
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "avformat.lib")
 #pragma comment(lib, "avcodec.lib")
-#pragma comment(lib, "swscale")
+#pragma comment(lib, "swscale.lib")
+#pragma comment(lib, "swresample.lib")
+#pragma comment(lib, "postproc.lib")
+#pragma comment(lib, "avfilter.lib")
+#include <QTimer>
+//#include <QTest>
+#define MAX_AUDIO_FRAME_SIZE (192000)
 
 namespace chen {
 
@@ -54,18 +60,25 @@ namespace chen {
 		is_opened = false;
 
 		formatType = fmt;
-
+		// rtsp协议设置tcp  rtsp_transport
+		AVDictionary *option = NULL;
+		av_dict_set(&option, "rtsp_transport", "tcp", 0);
 		// 1. 打开解封装上下文
 		int ret = avformat_open_input(
 			&ic, //解封装上下文
 			url,  //文件路径
 			NULL, //指定输入格式 h264,h265, 之类的， 传入NULL则自动检测
-			NULL); //设置参数的字典
+			&option); //设置参数的字典
 		if (ret != 0)
 		{
 			printf("%s\n", ffmepgerror(ret));
 			return false;
 		}
+		if (option)
+		{
+			av_dict_free(&option);
+		}
+		
 		//2.读取文件信息
 		ret = avformat_find_stream_info(ic, NULL);
 		if (ret < 0)
@@ -89,6 +102,14 @@ namespace chen {
 					stream->discard = AVDISCARD_ALL;
 				}
 			}
+			else if (stream->codecpar->codec_type == AVMEDIA_TYPE_AUDIO)
+			{
+				if (!audio_stream_)
+				{
+					audio_stream_ = stream;
+					audio_stream_index_ = i;
+				}
+			}
 			else
 			{
 				stream->discard = AVDISCARD_ALL;
@@ -101,17 +122,38 @@ namespace chen {
 			printf("can't find codec, codec id:%d\n", video_stream->codecpar->codec_id);
 			return false;
 		}
+
+
+		const AVCodec* audio_codec = avcodec_find_decoder(audio_stream_->codecpar->codec_id);
+		if (!audio_codec)
+		{
+			printf("can't find codec, audio codec id:%d\n", audio_stream_->codecpar->codec_id);
+			return false;
+		}
+
 		//5.创建解码器上下文
 		if (!(codec_ctx = avcodec_alloc_context3(codec)))
 		{
 			printf("avcodec_alloc_context3 failed,\n");
 			return false;
 		}
+		//5.创建解码器上下文
+		if (!(audio_codec_ctx = avcodec_alloc_context3(audio_codec)))
+		{
+			printf("avcodec_alloc_context3 audio_ failed,\n");
+			return false;
+		}
+
 
 		//6.从输入流复制编解码器参数到输出编解码器上下文
 		if ((ret = avcodec_parameters_to_context(codec_ctx, video_stream->codecpar)) < 0) {
-			printf("Failed to copy %s codec parameters to decoder context\n",
+			printf("Failed to copy %s video codec parameters to decoder context\n",
 				av_get_media_type_string(video_stream->codecpar->codec_type));
+			return false;
+		}
+		if ((ret = avcodec_parameters_to_context(audio_codec_ctx, audio_stream_->codecpar)) < 0) {
+			printf("Failed to copy %s audio codec parameters to decoder context\n",
+				av_get_media_type_string(audio_stream_->codecpar->codec_type));
 			return false;
 		}
 
@@ -121,8 +163,26 @@ namespace chen {
 				av_get_media_type_string(video_stream->codecpar->codec_type));
 			return false;
 		}
+
+		if ((ret = avcodec_open2(audio_codec_ctx, audio_codec, nullptr)) < 0) {
+			printf("Failed to open %s audio codec\n",
+				av_get_media_type_string(audio_stream_->codecpar->codec_type));
+			return false;
+		}
+		// ffmpeg -i audio1.mp3 -f s16le audio1.pcm
+		// ffplay -ar 44100 -ac 2 -f s16le -i audio1.pcm
+	/*	该命令的作用是使用ffplay播放频率为44100Hz，双通道，16位、小端的音频文件audio1.pcm。
+
+			注：
+			- i 表示指定的输入文件
+			- f 表示强制使用的格式
+			- ar 表示播放的音频数据的采样率
+			- ac 表示播放的音频数据的通道数
+
+			如下图所示，出现如下画面和能听到*/
 		//创建一个frame接收解码之后的帧数据
 		frame = av_frame_alloc();
+		audio_frame_ = av_frame_alloc();
 		is_opened = true;
 		width = video_stream->codecpar->width;
 		height = video_stream->codecpar->height;
@@ -153,9 +213,59 @@ namespace chen {
 		}
 
 
+
+
+
+		//设置转码参数
+		  out_channel_layout_ = audio_codec_ctx->channel_layout;
+		 out_sample_fmt_ = AV_SAMPLE_FMT_S16;
+		  out_sample_rate_ = audio_codec_ctx->sample_rate;
+		  out_channels_ = av_get_channel_layout_nb_channels(out_channel_layout_);
+		//printf("out rate : %d , out_channel is: %d\n",out_sample_rate,out_channels);
+
+		audio_out_buffer_ = (uint8_t*)av_malloc(MAX_AUDIO_FRAME_SIZE * 2);
+
+		audio_swr_ctx_ = swr_alloc_set_opts(NULL,
+			out_channel_layout_,
+			out_sample_fmt_,
+			out_sample_rate_,
+			audio_codec_ctx->channel_layout,
+			audio_codec_ctx->sample_fmt,
+			audio_codec_ctx->sample_rate,
+			0, NULL);
+
+		swr_init(audio_swr_ctx_);
+
+	
+		init_audio_device();
+
+
+
+		audio_thread_ = std::thread(&cvideo_capture::_audio_pthread, this);
 		return true;
 	}
+	void cvideo_capture::init_audio_device()
+	{
 
+		 QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+		 info_ = std::move(info);
+		fmt_.setSampleRate( audio_codec_ctx->sample_rate );
+		fmt_.setSampleSize(16/*audio_codec_ctx->frame_size*/);
+		fmt_.setChannelCount(audio_codec_ctx->channels);
+		fmt_.setCodec("audio/pcm");
+		fmt_.setByteOrder(QAudioFormat::LittleEndian);
+		fmt_.setSampleType(QAudioFormat::UnSignedInt);
+		
+		if (!info.isFormatSupported(fmt_))
+		{
+			qDebug() << "输出设备不支持该格式，不能播放音频";
+			return  ;
+		}
+		audio_ = new QAudioOutput(fmt_, qApp);  // 注意：这里QAudioOutput必须使用指针，否则不能播放
+		//audio_->setVolume(100);
+		  io_ = audio_->start();
+		int size = audio_->periodSize();     // 这是每个周期防止缓冲区欠载和确保不间断播放所需的数据量。
+	}
 	void cvideo_capture::close()
 	{
 		if (ic)
@@ -165,8 +275,15 @@ namespace chen {
 		}
 		if (codec_ctx)
 		{
+			avcodec_flush_buffers(codec_ctx);
 			avcodec_free_context(&codec_ctx);
 			codec_ctx = NULL;
+		}
+		if (audio_codec_ctx)
+		{
+			avcodec_flush_buffers(audio_codec_ctx);
+			avcodec_free_context(&audio_codec_ctx);
+			audio_codec_ctx = NULL;
 		}
 		if (sws_ctx)
 		{
@@ -194,41 +311,31 @@ namespace chen {
 		}
 		int ret = 0;
 		//定义AVPacket用来存储压缩的帧数据
-		AVPacket pkt;
-		av_init_packet(&pkt);
+		
 		out_frame = nullptr;
 		do
 		{
-			ret = avcodec_receive_frame(codec_ctx, frame);
-			out_frame = frame;
-			if (ret >= 0)
-			{
-				return 1;
-			}
-			//读取到结尾
-			if (ret == AVERROR_EOF)
-			{
-				out_frame = nullptr;
-				return 0;
-			}
-			else if (ret != AVERROR(EAGAIN))
-			{
-				printf("Error submitting a packet for decoding (%s)\n", ffmepgerror(ret));
-				return -1;
-			}
-
+			
+			AVPacket* pkt = av_packet_alloc();
+			av_init_packet(pkt);
+		
 			//读取一帧压缩数据
-			ret = av_read_frame(ic, &pkt);
-			if (ret != AVERROR_EOF && pkt.stream_index != video_stream_index)
+			ret = av_read_frame(ic,  pkt);
+			if (ret != AVERROR_EOF && pkt->stream_index != video_stream_index &&
+				pkt->stream_index != audio_stream_index_)
 			{
-				av_packet_unref(&pkt);
+				av_packet_unref(pkt);
+				av_packet_free(&pkt);
+				pkt = NULL;
 				continue;
 			}
 			if (ret < 0)
 			{
 				//判断是否读取到结尾，读取到结尾seek到第一帧
 				if (ret == AVERROR_EOF)
-					av_init_packet(&pkt);
+				{
+					av_init_packet(pkt);
+				}
 				else
 				{
 					printf("av_read_frame error:%s\n", ffmepgerror(ret));
@@ -237,9 +344,181 @@ namespace chen {
 			}
 
 			//压缩帧数据据发送到解码线程
-			ret = avcodec_send_packet(codec_ctx, &pkt);
-			av_packet_unref(&pkt);
-			if (ret < 0) {
+			if (pkt->stream_index == video_stream_index)
+			{
+				ret = avcodec_send_packet(codec_ctx,  pkt);
+				av_packet_unref(pkt);
+				av_packet_free(&pkt);
+				pkt = NULL;
+				if (ret < 0) {
+					printf("Error submitting a packet for video decoding (%s)\n", ffmepgerror(ret));
+					return -1;
+				}
+				ret = avcodec_receive_frame(codec_ctx, frame);
+				
+				if (ret >= 0)
+				{
+					out_frame = /*std::move*/(frame);
+					out_frame->nb_samples = 0;
+					return 1;
+				}
+			}
+			else if (pkt->stream_index == audio_stream_index_)
+			{
+				{
+					std::lock_guard<std::mutex> lk(audio_lock_);
+					audio_queue_.emplace_back(std::move(pkt));
+					pkt = NULL;
+					cond_.notify_one();
+					
+					frame->nb_samples = 10;
+					out_frame = /*std::move*/(frame);
+					return 1;
+				}
+#if 0
+				ret = avcodec_send_packet(audio_codec_ctx, &pkt);
+				av_packet_unref(&pkt);
+				if (ret < 0) {
+					printf("Error submitting a packet for audio decoding (%s)\n", ffmepgerror(ret));
+					return -1;
+				}
+				ret = avcodec_receive_frame(audio_codec_ctx, frame);
+
+				if (ret >= 0)
+				{
+					if (av_sample_fmt_is_planar(audio_codec_ctx->sample_fmt)) {
+						int len = swr_convert(audio_swr_ctx_,
+							&audio_out_buffer_,
+							MAX_AUDIO_FRAME_SIZE * 2,
+							(const uint8_t**)frame->data,
+							frame->nb_samples);
+						if (len <= 0) 
+						{
+							continue;
+						}
+						//qDebug("convert length is: %d.\n",len);
+
+						int out_size = av_samples_get_buffer_size(0,
+							out_channels_,
+							len,
+							out_sample_fmt_,
+							1);
+						//qDebug("buffer size is: %d.",dst_bufsize);
+
+						sleep_time_ = (out_sample_rate_ * 16 * 2 / 8) / out_size;
+
+						if (audio_->bytesFree() < out_size) {
+							 //QTest::qSleep(sleep_time_);
+							//QThread::sleep(sleep_time_);
+							io_->write((char*)audio_out_buffer_, out_size);
+						}
+						else {
+							io_->write((char*)audio_out_buffer_, out_size);
+						}
+						//将数据写入PCM文件
+						//fwrite(audio_out_buffer,1,dst_bufsize,file);
+					}
+#endif 
+#if 0
+					
+					//else 
+					{
+						int data_size = av_get_bytes_per_sample(audio_codec_ctx->sample_fmt);
+						if (data_size < 0) {
+							/* This should not occur, checking just for paranoia */
+							fprintf(stderr, "Failed to calculate data size\n");
+							//exit(1);
+						}
+						else
+						{
+							int audio_total_size = frame->nb_samples * data_size * audio_codec_ctx->ch_layout.nb_channels;
+							static uint8_t * p = new uint8_t[audio_total_size * 8];
+							uint32_t size_index = 0;
+							//QByteArray qbuf(audio_total_size, 0);
+#if 0
+							for (int i = 0; i < frame->nb_samples; i++)
+							{
+								for (int ch = 0; ch < audio_codec_ctx->ch_layout.nb_channels; ch++)
+								{
+									/*static FILE * out_file_ptr = fopen("chensong.pcm", "wb+");
+									if (out_file_ptr)
+									{
+										fwrite((const uint8_t *)(frame->data[ch] + data_size * i), 1, data_size, out_file_ptr);
+										fflush(out_file_ptr);
+									}*/
+									memcpy(p + size_index, (const uint8_t *)(frame->data[ch] + data_size * i), data_size);
+									size_index += data_size;
+									//io_->write((const char *)(frame->data[ch] + data_size * i), data_size);
+									//QByteArray tempbuf((const char *)(frame->data[ch] + data_size * i), data_size);
+									//QString qstr;
+									//qstr.fill(frame->data[ch] + data_size * i, data_size);
+									//qbuf.append(QString(frame->data[ch] + data_size * i, data_size));
+									//qbuf += qbuf.append(tempbuf);
+									//tempbuf.remove()
+								//	io_->write(tempbuf.mid(0, data_size));
+								}
+							}
+							qint64 write_len = 0;
+							//int32_t size_q = audio_->periodSize();
+							//while (write_len < size_index)
+							{
+								/*while (audio_->bytesFree() < size_index)
+								{
+									Sleep(1);
+								}*/
+								
+								//int32_t w_len = size_q > (size_index - write_len) ? (size_index - write_len) : size_q;
+								  write_len += io_->write((const char *)(p /*+ write_len*/), size_index);
+							}
+							/*while (audio_->bytesFree() < audio_->periodSize())
+							{
+								Sleep(1);
+							}
+
+
+							while (audio_->bytesFree() > audio_->periodSize())
+							{
+							}
+							qint64 write_len = io_->write((const char *)p, size_index);*/
+#else  //
+							
+
+							//io_->write(reinterpret_cast<const char*>(frame->data[0]),
+							//	frame->nb_samples * av_get_bytes_per_sample(AV_SAMPLE_FMT_S16));
+#endif //
+							//qbuf.remove(0, audio_total_size);
+									//fwrite(frame->data[ch] + data_size * i, 1, data_size, outfile);
+						}
+						
+					}
+					out_frame = /*std::move*/(frame);
+					return 1;
+					}
+
+#endif 
+					
+				
+
+
+				//if ()
+			}
+			if (pkt)
+			{
+				av_packet_free(&pkt);
+				pkt = NULL;
+			}
+			//if (pkt->)
+				//读取到结尾
+			if (ret == 0 )
+			{
+			}
+			else if (ret == AVERROR_EOF)
+			{
+				out_frame = nullptr;
+				return 0;
+			}
+			else if (  ret != AVERROR(EAGAIN))
+			{
 				printf("Error submitting a packet for decoding (%s)\n", ffmepgerror(ret));
 				return -1;
 			}
@@ -252,10 +531,51 @@ namespace chen {
 
 	int cvideo_capture::retrieve(AVFrame*& out_frame)
 	{
+
+
+
 		AVFrame* srcFrame = nullptr;
-		int ret = grab_frame(srcFrame);
-		if (ret > 0)
+	
+		
+		while (true)
 		{
+			int ret = grab_frame(srcFrame);
+			if (ret < 0)
+			{
+				return ret;
+			}
+
+			if (frame->nb_samples > 0)
+			{
+//#define AUDIO_PCM (1)
+
+#if 0// AUDIO_PCM
+
+				static FILE * out_audio_file_ptr = fopen("test.pcm", "wb+");
+				if (out_audio_file_ptr)
+				{
+					int data_size = av_get_bytes_per_sample(audio_codec_ctx->sample_fmt);
+					if (data_size < 0) {
+						/* This should not occur, checking just for paranoia */
+						fprintf(stderr, "Failed to calculate data size\n");
+						//	exit(1);
+					}
+					else
+					{
+						for (int i = 0; i < frame->nb_samples; i++)
+						{
+							for (int ch = 0; ch < audio_codec_ctx->ch_layout.nb_channels; ch++)
+							{
+								fwrite(frame->data[ch] + data_size * i, 1, data_size, out_audio_file_ptr);
+							}
+						}
+
+						fflush(out_audio_file_ptr);
+					}
+				}
+#endif 
+				continue;
+			}
 			//判断解码出来的像素格式与目标像素格式是否相同
 			if (srcFrame->format == formatType)
 			{
@@ -307,15 +627,79 @@ namespace chen {
 				sws_frame->color_range = srcFrame->color_range;
 				out_frame = sws_frame;
 			}
-
+			return ret;
 		}
-		else
-		{
-			out_frame = nullptr;
-		}
-		return ret;
+		 
+		return -1;
 	}
+	void cvideo_capture::_audio_pthread()
+	{
+		AVPacket* packet = NULL;
+		while (true)
+		{
+			{
+				std::unique_lock<std::mutex> lk(audio_lock_);
+				cond_.wait(lk, [this]() {return audio_queue_.size() > 0; });
+			}
+			{
+				std::lock_guard<std::mutex> lk(audio_lock_);
+				if (!audio_queue_.empty())
+				{
+					 packet =  std::move(audio_queue_.front());
+					audio_queue_.pop_front();
+				}
+			}
 
+			int ret = avcodec_send_packet(audio_codec_ctx, packet);
+			av_packet_unref(packet);
+			av_packet_free(&packet);
+			packet = NULL;
+			if (ret < 0) {
+				printf("Error submitting a packet for audio decoding (%s)\n", ffmepgerror(ret));
+				continue;
+			}
+			ret = avcodec_receive_frame(audio_codec_ctx, audio_frame_);
+
+			if (ret >= 0)
+			{
+				if (av_sample_fmt_is_planar(audio_codec_ctx->sample_fmt)) {
+					int len = swr_convert(audio_swr_ctx_,
+						&audio_out_buffer_,
+						MAX_AUDIO_FRAME_SIZE * 2,
+						(const uint8_t**)audio_frame_->data,
+						audio_frame_->nb_samples);
+					if (len <= 0)
+					{
+						continue;
+					}
+					//qDebug("convert length is: %d.\n",len);
+
+					int out_size = av_samples_get_buffer_size(0,
+						out_channels_,
+						len,
+						out_sample_fmt_,
+						1);
+					//qDebug("buffer size is: %d.",dst_bufsize);
+
+					sleep_time_ = (out_sample_rate_ * 16 * 2 / 8) / out_size;
+
+					if (audio_->bytesFree() < out_size) {
+						//QTest::qSleep(sleep_time_);
+					  // QThread::sleep(sleep_time_);
+						Sleep(1);
+						io_->write((char*)audio_out_buffer_, out_size);
+					}
+					else {
+						io_->write((char*)audio_out_buffer_, out_size);
+					}
+					//将数据写入PCM文件
+					//fwrite(audio_out_buffer,1,dst_bufsize,file);
+				}
+			}
+			 
+		}
+
+	}
 	bool cvideo_capture::seek(double percentage)
 	{
 		if (!is_opened)
